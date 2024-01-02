@@ -3,8 +3,8 @@ title: 'Tipologia de Datos: PRA2 - Limpieza de Datos'
 author: "Autor: Sergi Sánchez Romero y Lucia Blanc Velázquez"
 date: "Diciembre 2023"
 output:
- 
   html_document: 
+    logo: PR2_logo.png
     highlight: default
     number_sections: yes
     theme: cosmo
@@ -13,9 +13,12 @@ output:
   pdf_document: 
     highlight: zenburn
     toc: yes
-    always_allow_html: true   # Esta línea puede estar aquí si estás teniendo problemas
+    always_allow_html: true  
   word_document: default
 ---
+
+![](/Users/luciablanc/Downloads/PR2_logo.png){ style="display: block; margin-left: auto; margin-right: auto;" }
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -60,7 +63,7 @@ A continuación, realizamos la descripción de las variables que hay en el datas
 
 + **age**: Edad del paciente
 
-+ **sex** : Sexo del paciente (Sex) (F=0; M=1)
++ **sex** : Sexo del paciente (F=0; M=1)
 
 + **cp** : Tipo dolor torácico
 
@@ -90,7 +93,7 @@ A continuación, realizamos la descripción de las variables que hay en el datas
 
 + **exng** : Angina inducida por el ejercicio (1 = si; 0 = no)
 
-+ **oldpeak** : Pico previo (OldPeak)
++ **oldpeak** : Pico previo
 
 + **slp** : Pendiente del segmento ST máximo del ejercicio
 
@@ -111,6 +114,7 @@ Puede ser el resultado de adicionar diferentes datasets o una subselección úti
 
 Primero de todo, cargamos las librerías que vamos a usar durante la práctica
 ```{r}
+
 if (!require('dplyr')) install.packages('dplyr');library(dplyr)
 if (!require('ggplot2')) install.packages('ggplot2');library(ggplot2)
 if (!require('reshape')) install.packages('reshape');library(reshape)
@@ -121,9 +125,6 @@ if (!require('corrplot')) install.packages('corrplot');library(corrplot)
 if (!require('Matrix')) install.packages('matrix');library(Matrix)
 if (!require('patchwork')) install.packages('patchwork');library(patchwork)
 if (!require('ggcorrplot')) install.packages('ggcorrplot');library(ggcorrplot)
-if (!require('C50')) install.packages('ggcorrplot');library(C50)
-if (!require('moments')) install.packages('ggcorrplot');library(moments)
-if (!require('car')) install.packages('ggcorrplot');library(car)
 if (!require('corrplot')) install.packages('ggcorrplot');library(corrplot)
 ```
 
@@ -139,8 +140,8 @@ heart <- read_excel("~/Documents/AAESTUDIOS/UOC_Máster_Data_Science/4t_Semestre
 head(heart, max(10))
 str(heart)
 
-# Definimos las variables como numericas o categóricas
-# Númericas
+# Definimos las variables como numéricas o categóricas
+# Numéricas
 heart$age<-as.numeric(heart$age)
 heart$trtbps<-as.numeric(heart$trtbps)
 heart$chol<-as.numeric(heart$chol)
@@ -158,7 +159,7 @@ heart$exng<-as.factor(heart$exng)
 heart$slp<-as.factor(heart$slp)
 heart$thall<-as.factor(heart$thall)
 
-#Observamos las dimensiones del dataset "heart"
+# Observamos las dimensiones del dataset "heart"
 heart.cols<-dim(heart)[2]
 heart.rows<-dim(heart)[1]
 ```
@@ -174,31 +175,37 @@ heart$age_group <- cut(heart$age, breaks = c(0, 30, 60, max(heart$age)), labels 
 # Ahora 'age_group' contiene categorías de edad en lugar de valores continuos
 str(heart)
 
+# Ahora el conjunto de datos heart tiene 15 atributos y 303 observaciones
+
+
 # Seleccionamos sólo los pacientes con presión arterial alta, ya que tienen un mayor riesgo
 heart <- heart[heart$trtbps > 140, ]
 
 str(heart)
 ```
+Finalmente, después de la selección de datos, obtenemos el conjunto de datos heart con el que trabajaremos, el cual contiene un total de 15 atributos y 65 observaciones.
 
 
 
 Ahora vamos a visualizar la información básica del conjunto de datos
 ```{r}
-# La variable output nos va indicar quien tiene o no una enfermedad del corazón, por lo que primero calculamos el porcentaje de pacientes que tienen enfermedad del corazón y los que no
+# La variable output nos va indicar quien tiene o no una mayor probabilidad de sufrir un ataque al corazón, por lo que primero calculamos el porcentaje de pacientes que tienen mayor probabilidad y luego el resto
 
-print("Porcentaje de personas con enfermedad cardiovascular")
-(sum(heart$output == 1)/nrow(heart))*100
-# Vemos que el porcentaje de personas con una enfermedad cardiovascular es del 41,53%
+print("Porcentaje de personas con probabilidad de infarto")
+round((sum(heart$output == 1)/nrow(heart)) * 100, 2)
 
-
-print("Porcentaje de personas sin enfermedad cardiovascular")
-(sum(heart$output == 0)/nrow(heart))*100
-# Vemos que el porcentaje de personas sin una enfermedad cardiovascular es del 58,46%
+# Vemos que el porcentaje de personas con probabilidad de infarto es del 41,53%
 
 
+print("Porcentaje de personas sin probabilidad de infarto")
+round((sum(heart$output == 0)/nrow(heart))*100,2)
+# Vemos que el porcentaje de personas sin probabilidad de infarto es del 58,46%
+```
 
 
-# A continuación estudiamos la estadística básica de las variables del conjunto, cargando el sumario de todos los atributos
+
+A continuación estudiamos la estadística básica de las variables del conjunto, cargando el sumario de todos los atributos
+```{r}
 summary(heart)
 
 library(ggplot2)
@@ -235,7 +242,7 @@ g4<-ggplot(data=heart, aes(x=trtbps))+
 g4
 
 
-# Colesterol Sérico
+# Colesterol Sérico (chol)
 summary(heart$chol)
 g5<-ggplot(data=heart, aes(x=chol))+
   geom_histogram(color="darkblue", fill="yellow") + 
@@ -317,7 +324,7 @@ g13<-ggplot(data=heart, aes(x=thall))+
 g13
 
 
-# Variable Cardiopatía (output)
+# Probabilidad Infarto (output)
 summary(heart$output)
 g14<-ggplot(data=heart, aes(x=output))+
   geom_bar(fill="purple")+ 
@@ -333,7 +340,8 @@ g15<-ggplot(data=heart, aes(x=age_group))+
   labs(title = "Distribución de los grupos de edad", x="Grupo de edad", y= "Recuento") 
 g15
 
-#Visualizamos los resultados en una matriz de correlaciones, incluyendo todas las variables numéricas
+
+# Visualizamos los resultados en una matriz de correlaciones, incluyendo todas las variables numéricas
 library(ggcorrplot)
 df2 <- heart[c(14, 1,4,5, 8, 10, 12)]
 corr <- cor(round(df2, 2))
@@ -359,15 +367,15 @@ colSums(heart_ld=="")
 # Vemos como no hay ningun valor nulo en el conjunto de datos
 
 
+
 # Estudiamos si hay valores que estén duplicados
 sum(duplicated(heart_ld)) # Hay una fila que está repetida
-
 
 # Buscamos cual es la fila repetida
 duplicated_rows <- duplicated(heart_ld)
 duplicate_row <- heart_ld[duplicated_rows, ]
 
-heart_ld <- unique(heart_ld)  # Eliminamos la filas duplicada
+heart_ld <- unique(heart_ld)  # Eliminamos la fila duplicada
 
 sum(duplicated(heart_ld)) # Comprobamos como ahora no hay ninguna fila duplicada
 ```
@@ -376,7 +384,8 @@ sum(duplicated(heart_ld)) # Comprobamos como ahora no hay ninguna fila duplicada
 
 
 ## Identifica y gestiona los valores extremos
-Seguidamente es importante estudiar la posibilidad de valores outliers para las variables númericas de la base de datos
+
+Seguidamente es importante estudiar la posibilidad de valores outliers para las variables numéricas de la base de datos
 ```{r}
 # Para ello, creamos una función para que la podamos aplicar en cada uno de los atributos, de la cual obtengamos un gráfico Boxplot y una representación de puntos en forma de vector para poder visualizar mejor la posibilidad de valores outliers.
 
@@ -410,32 +419,36 @@ return(list(outliers=outliers, fig=fig))
 analisis = analisis_outliers(heart_ld$age,"Age")
 
 # Representamos los datos con un gráfico BoxPlot
-analisis$fig # No hay valores outliers
+analisis$fig 
+# No hay valores outliers
 
 
 
 # Resting Blood Pressure (trtbps)
 analisis = analisis_outliers(heart_ld$trtbps,"Resting Blood Pressure")
-analisis$fig # Tampoco encontramos valores outliers, ya que, al filtrar con valores > 140, entendemos que todos los valores son posibles
+analisis$fig 
+# Tampoco encontramos valores outliers, ya que, al filtrar con valores > 140, entendemos que todos los valores son posibles
 
 
 
 # Cholesterol (chol)
 analisis = analisis_outliers(heart_ld$chol,"Cholesterol")
 analisis$fig
-# Vemos que la distribución está centrada entre 126 y 400, por lo que no vemos ningún punto outlier.
+# Vemos que la distribución está centrada entre 126 y 400, por lo que no hay ningún punto outlier.
 
 
 
 # Maximum Heart Rate (thalachh)
 analisis = analisis_outliers(heart_ld$thalachh,"Maximum Heart Rate")
-analisis$fig #No se observan valores outliers
+analisis$fig 
+# No se observan valores outliers
 
 
 
 # Oldpeak (oldpeak)
 analisis = analisis_outliers(heart_ld$oldpeak,"Oldpeak")
-analisis$fig #Hay puntos que podrían ser valores outliers
+analisis$fig 
+# Hay puntos que podrían ser valores outliers
 
 # Visualizamos los valores candidatos a outliers
 analisis$outliers
@@ -449,27 +462,26 @@ analisis$outliers
 ```{r}
 # Mostramos el resumen de los datos después de haber limpiado todo el conjunto
 str(heart_ld)
-# Vemos como ahora tenemos 15 atributos y hemos cambiado a tener 65 observaciones
 
 summary(heart_ld)
 
 #Volvemos a visualizar los datos en conjunto como al inicio, pero con los datos limpios
 
-#Edad
+# Edad (age)
 summary(heart_ld$age)
 g1<-ggplot(data=heart_ld, aes(x=age))+
   geom_density(color="darkblue", fill="blue") + 
   labs(title = "Edad de los pacientes", x="Edad", y= "Densidad")
 g1
 
-#Sexo
+# Sexo (sex)
 summary(heart_ld$sex)
 g2<-ggplot(data=heart_ld, aes(x=sex))+
  geom_bar(mapping = aes(x=sex, fill=sex)) + 
   labs(title = "Sexo de los pacientes", x="Sexo", y= "Recuento") 
 g2
 
-#Dolor Torácico (cp)
+# Dolor Torácico (cp)
 summary(heart_ld$cp)
 g3<-ggplot(data=heart_ld, aes(x=cp))+
   geom_bar(aes(fill=cp)) + 
@@ -477,7 +489,7 @@ g3<-ggplot(data=heart_ld, aes(x=cp))+
   labs(title = "Distribución del Dolor Torácico", x="Dolor Torácico", y= "Recuento") + theme_classic()
 g3
 
-#Presión Arterial en Reposo (trtbps)
+# Presión Arterial en Reposo (trtbps)
 summary(heart_ld$trtbps)
 g4<-ggplot(data=heart_ld, aes(x=trtbps))+
   geom_histogram(color="darkblue", fill="green") + 
@@ -485,7 +497,7 @@ g4<-ggplot(data=heart_ld, aes(x=trtbps))+
   labs(title = "Distribución de la Presión Arterial en Reposo", x="Presión Arterial en Reposo (mm Hg)", y= "Recuento") 
 g4
 
-#Colesterol Sérico (chol)
+# Colesterol Sérico (chol)
 summary(heart_ld$chol)
 g5<-ggplot(data=heart_ld, aes(x=chol))+
   geom_histogram(color="darkblue", fill="yellow") + 
@@ -493,7 +505,7 @@ g5<-ggplot(data=heart_ld, aes(x=chol))+
   labs(title = "Distribución del Colesterol Sérico", x="Colesterol Sérico (mm/dl)", y= "Recuento")
 g5
 
-#Glucemia en ayunas (fbs)
+# Glucemia en ayunas (fbs)
 summary(heart_ld$fbs)
 g6<-ggplot(data=heart_ld, aes(x=fbs))+
   geom_bar(fill="maroon4") + 
@@ -510,7 +522,7 @@ g7<-ggplot(data=heart_ld, aes(x=restecg))+
   labs(title = "Distribución ECG en Reposo", x="ECG en Reposo", y= "Recuento") 
 g7
 
-#Frecuencia Cardíaca Máxima (thalachh)
+# Frecuencia Cardíaca Máxima (thalachh)
 summary(heart_ld$thalachh)
 g8<-ggplot(data=heart_ld, aes(x=thalachh))+
   geom_density(color="darkblue", fill="brown") + 
@@ -518,7 +530,7 @@ g8<-ggplot(data=heart_ld, aes(x=thalachh))+
   labs(title = "Distribución Frecuencia Cardíaca Máxima alcanzada", x="Frecuencia Cardíaca Máxima", y= "Densidad")
 g8
 
-#Angina de Esfuerzo (exng)
+# Angina de Esfuerzo (exng)
 summary(heart_ld$exng)
 g9<-ggplot(data=heart_ld, aes(x=exng))+
  geom_bar(aes(fill=exng)) + 
@@ -526,7 +538,7 @@ g9<-ggplot(data=heart_ld, aes(x=exng))+
   labs(title = "Distribución Anginas Inducidas por Esfuerzo", x="Angina Inducida por Esfuerzo", y= "Recuento") 
 g9
 
-#Antiguo pico (oldpeak)
+# Antiguo pico (oldpeak)
 summary(heart_ld$oldpeak)
 g10<-ggplot(data=heart_ld, aes(x=oldpeak))+
   geom_histogram(color="black", fill="turquoise") + 
@@ -534,7 +546,7 @@ g10<-ggplot(data=heart_ld, aes(x=oldpeak))+
   labs(title = "Distribución Valor Medido en Depresión", x="Valor", y= "Recuento")
 g10
 
-#Pendiente del Segmento ST máximo (slp)
+# Pendiente del Segmento ST máximo (slp)
 summary(heart_ld$slp)
 g11<-ggplot(data=heart_ld, aes(x=slp))+
   geom_bar(aes(fill=slp))+ 
@@ -561,7 +573,7 @@ g13<-ggplot(data=heart_ld, aes(x=thall))+
 g13
 
 
-#Variable Cardiopatía (output)
+# Variable Cardiopatía (output)
 summary(heart_ld$output)
 g14<-ggplot(data=heart_ld, aes(x=output))+
   geom_bar(fill="purple")+ 
@@ -579,13 +591,16 @@ g15<-ggplot(data=heart_ld, aes(x=age_group))+
 g15
 
 
-#Visualizamos los resultados en una matriz de correlaciones, incluyendo todas las variables
+# Visualizamos los resultados en una matriz de correlaciones, incluyendo todas las variables
 library(ggcorrplot)
 df2 <- heart_ld[c(14, 1,4,5, 8, 10, 12)]
 corr <- cor(round(df2, 2))
 corr_chart<-ggcorrplot(corr ,hc.order=TRUE,lab=FALSE)
 corr_chart
 ```
+
+
+
 
 ## Discretización de los datos 
 ```{r}
@@ -602,7 +617,7 @@ heart_discr["age"] <- cut(heart_discr$age, breaks=c(-Inf, 40,65,+Inf),
 summary(heart_discr$age)
 
 
-#Resting Blood Pressure
+# Resting Blood Pressure
 heart_discr["trtbps"] <- cut(heart_discr$trtbps, breaks=c(-Inf, 120, 140,+Inf),
                       labels=c("Normal","Alta","Muy Alta"))
 # Comprobamos como quedan los datos
@@ -649,10 +664,9 @@ Dividiremos el análisis en tres partes sobre las variables que anteriormente he
 
 Los análisis que realizaremos son los siguientes
 
-ANOVA (Análisis Comparativo): Evaluaremos la diferencia en la variable de salida ("output") en función de la edad, presión arterial, nivel de colesterol, frecuencia cardíaca máxima alcanzada, depresión inducida por el ejercicio y el número de grandes vasos. Esto nos permite determinar si hay diferencias significativas en la media de "output" entre los distintos niveles de estas variables.
-
-
 Matriz de Correlaciones: Exploraremos las relaciones lineales entre todas las variables seleccionadas. Este análisis nos mostrará cómo se correlacionan entre sí las variables, permitiendo identificar asociaciones y patrones de relación, lo que podría sugerir qué variables están más estrechamente relacionadas con la presencia de ataques cardíacos.
+
+ANOVA (Análisis Comparativo): Evaluaremos la diferencia en la variable de salida ("output") en función de todas las variables incluidas también en la matriz de correlación. Esto nos permite determinar si hay diferencias significativas en la media de "output" entre los distintos niveles de estas variables.
 
 Modelo Predictivo (Regresión Logística): Utilizaremos una regresión logística para predecir la ocurrencia de ataques cardíacos ("output") basándonos en las variables con una correlación relevante en la matriz anterior. Analizaremos variables como el tipo de dolor torácico, frecuencia cardíaca máxima alcanzada, tasa de mortalidad, angina inducida por el ejercicio, pendiente del segmento ST máximo del ejercicio y el número de grandes buques. El objetivo es comprender qué variables son predictivas de ataques cardíacos y en qué medida influyen en la predicción.
 
@@ -717,30 +731,6 @@ Esta evaluación proporciona una visión detallada de cómo las variables numér
 
 ## Aplicación de pruebas estadísticas para comparar los grupos de datos
 
-### Analísis comparativo
-
-Para realizar un análisis comparativo de todas las variables numéricas y la variable output, empleamos la prueba estadística de ANOVA, prueba que evalúa si hay diferencias significativas en la media de la variable de salida entre los distintos niveles de las variables numéricas.
-```{r}
-# ANOVA entre la variable de salida (output) y las variables numéricas
-anova_output_age <- aov(output ~ age, data = heart_ld)
-anova_output_trtbps <- aov(output ~ trtbps, data = heart_ld)
-anova_output_chol <- aov(output ~ chol, data = heart_ld)
-anova_output_thalachh <- aov(output ~ thalachh, data = heart_ld)
-anova_output_oldpeak <- aov(output ~ oldpeak, data = heart_ld)
-anova_output_caa <- aov(output ~ caa, data = heart_ld)
-
-
-# Resumen de los resultados del ANOVA
-summary(anova_output_age)
-summary(anova_output_trtbps)
-summary(anova_output_chol)
-summary(anova_output_thalachh)
-summary(anova_output_oldpeak)
-summary(anova_output_caa)
-```
-Teniendo en cuenta los resultados, parece que la frecuencia cardíaca máxima alcanzada (thalachh), el número de grandes vasos (caa) y, en menor medida, la depresión inducida por el ejercicio (oldpeak) tienen asociaciones significativas con la presencia de enfermedades cardíacas. Sin embargo, la edad (age), la presión arterial en reposo  (trtbps) y el nivel de colesterol (chol) en sangre no parecen estar asociados de manera significativa con la variable de salida (output) en este análisis.
-
-
 ### Matriz Correlaciones
 Mediante la creación de una matriz de correlaciones, procederemos a estudiar la relación que hay entre cada uno de los atributos del conjunto de datos, mediante los datos limpios sin la discretización (heart_ld) y convertimos aquellas variables categóricas en númericas
 ```{r}
@@ -772,7 +762,6 @@ heart_cor$thall <- as.numeric(as.character(heart_cor$thall))
 # output
 heart_cor$output <- as.numeric(as.character(heart_cor$output))
 
-heart_cor$output
 
 # Imprimimos la estructura de este nuevo dataset para ver como han sido transformadas las variables
 str(heart_cor)
@@ -793,7 +782,7 @@ corrplot(corr, method = "square", shade.col = NA, tl.col = "black",
          tl.srt = 45, col = col(200), addCoef.col = "black", order = "AOE", 
          type = "upper", diag = F, addshade = "all")
 ```
-Viendo la matriz de correlaciones y las complementarias gráficas que hemos ido viendo a lo largo del análisis, podemos confirmar que existe una clara relación entre las variables incluidas en el conjunto de datos y el hecho de padecer una enfermedad cardiovascular. De la misma manera, vemos cuales son las diferentes relaciones entre las variables y la manera en que podemos reducir el riesgo de padecder la enfermedad, hecho que podemos estudiar con el método de componentes principales (PCA) y a continuación. 
+Viendo la matriz de correlaciones, podemos confirmar que existe una clara relación entre algunas de las variables incluidas en el conjunto de datos y el hecho de padecer un infarto cardiovascular. De la misma manera, vemos cuales son las diferentes relaciones entre las variables y la manera en que podemos reducir el riesgo de padecder un infarto, hecho que podemos estudiar con un análisis comparativo con ANOVA y usando un modelo predictivo a continuación. 
 
 
 ```{r}
@@ -804,40 +793,89 @@ Nos fijamos en la variable que realmente nos interesa para saber que factores ay
 
 
 
+### Analísis comparativo (ANOVA)
+
+Para realizar un análisis comparativo de todas las variables numéricas y la variable output, empleamos la prueba estadística de ANOVA, prueba que evalúa si hay diferencias significativas en la media de la variable de salida entre los distintos niveles de las variables numéricas.
+```{r}
+# ANOVA entre la variable de salida (output) y las variables numéricas
+anova_output_age <- aov(output ~ age, data = heart_cor)
+anova_output_trtbps <- aov(output ~ trtbps, data = heart_cor)
+anova_output_chol <- aov(output ~ chol, data = heart_cor)
+anova_output_thalachh <- aov(output ~ thalachh, data = heart_cor)
+anova_output_oldpeak <- aov(output ~ oldpeak, data = heart_cor)
+anova_output_caa <- aov(output ~ caa, data = heart_cor)
+
+anova_output_sex <- aov(output ~ sex, data = heart_cor)
+anova_output_cp <- aov(output ~ cp, data = heart_cor)
+anova_output_fbs <- aov(output ~ fbs, data = heart_cor)
+anova_output_restecg <- aov(output ~ restecg, data = heart_cor)
+anova_output_exng <- aov(output ~ exng, data = heart_cor)
+anova_output_slp <- aov(output ~ slp, data = heart_cor)
+anova_output_thall <- aov(output ~ thall, data = heart_cor)
+
+
+# Resumen de los resultados del ANOVA
+summary(anova_output_age)
+summary(anova_output_trtbps)
+summary(anova_output_chol)
+summary(anova_output_thalachh)
+summary(anova_output_oldpeak)
+summary(anova_output_caa)
+
+summary(anova_output_sex)
+summary(anova_output_cp)
+summary(anova_output_fbs)
+summary(anova_output_restecg)
+summary(anova_output_exng)
+summary(anova_output_slp)
+summary(anova_output_thall)
+
+```
+
+Parece que la frecuencia cardíaca máxima alcanzada (thalachh), el número de grandes vasos (caa), el tipo de dolor de pecho (cp), la presencia de angina inducida por el ejercicio (exng) y, en menor medida, el tipo de pendiente del segmento ST del electrocardiograma en reposo (slp), la tasa de mortalidad (thall) y la depresión inducida por el ejercicio (oldpeak), muestran asociaciones significativas con la presencia de enfermedades cardíacas. Estos hallazgos, indicados por los valores de p altamente significativos , podrían sugerir la importancia de estas variables en la predicción o diagnóstico de enfermedades cardíacas en el conjunto de datos analizado.
+
+Por otro lado, variables como la edad (age), el sexo (sex), el nivel de azúcar en sangre en ayunas (fbs), el resultado del electrocardiograma en reposo (restecg), la presión arterial en reposo (trtbps) y el colesterol (chol) no parecen demostrar una asociación significativa con la variable de salida (output) en este análisis, ya que sus valores p no alcanzan niveles de significancia estadística.
+
+Estos resultados proporcionan una visión inicial sobre qué variables podrían ser más relevantes al abordar problemas relacionados con enfermedades cardíacas en este contexto específico. Sin embargo, es importante tener en cuenta que estos hallazgos pueden requerir una validación adicional o un análisis más detallado para confirmar su relevancia clínica o predictiva, como lo haremos a continuación mediante un modelo de regresión logística
+
+
+
 ### Modelado Predictivo (Regresión logística)
-Para construir un modelo predictivo usando regresión logística con las variables seleccionadas, usamos la función glm().
+Para construir un modelo predictivo usando regresión logística con las variables seleccionadas del ANOVA anterior, usamos la función glm().
 ```{r}
 # Ajustamos un modelo de regresión logística para predecir enfermedades cardíacas
-model <- glm(output ~ cp + thalachh + thall + exng + slp + caa, data = heart_cor, family = "binomial")
+model <- glm(output ~ caa + cp + thalachh + oldpeak + thall + exng + slp , data = heart_cor, family = "binomial")
 summary(model)
 
 # Predicciones usando el modelo
 predictions <- predict(model, type = "response")
+predictions
 ```
-El modelo de regresión logística creado, intenta predecir la probabilidad de ocurrencia de enfermedades cardíacas (output) basándose en las variables predictoras (cp, thalachh, thall, exng, slp y caa).
+El modelo de regresión logística tiene como objetivo predecir la probabilidad de ocurrencia de enfermedades cardíacas (output) a partir de un conjunto de variables predictoras (cp, thalachh, thall, oldpeak, exng, slp y caa).
 
-+ **cp (Tipo de dolor torácico)** : Se encuentra una relación positiva significativa (coeficiente 1.39069, p-valor 0.00523). Mayores niveles de este tipo de dolor se asocian con un aumento en la probabilidad de enfermedades cardíacas.
-+ **thalachh (Frecuencia cardíaca máxima alcanzada)** : No se encuentra una asociación significativa (coeficiente 0.02077, p-valor 0.36811) con la ocurrencia de enfermedades cardíacas en este modelo.
-+ **thall (Tasa de mortalidad)** : Muestra una relación negativa significativa (-1.62525, p-valor 0.02512). Niveles más altos de esta variable se relacionan con una disminución en la probabilidad de enfermedades cardíacas.
-+ **exng (Angina inducida por el ejercicio)** : No muestra una relación significativa (p-valor alto: 0.84177) con la presencia de enfermedades cardíacas.
-+ **slp (Pendiente del segmento ST máximo del ejercicio)** : Indica una posible asociación positiva (coeficiente 1.44980) aunque no es estadísticamente significativa a un nivel del 95% (p-valor 0.07297).
-+ **caa (Número de grandes buques)** : Muestra una posible relación negativa (-1.06408) aunque no es estadísticamente significativa al 95% (p-valor 0.06887).
++ **cp (Tipo de dolor torácico)** : Existe una relación positiva significativa entre el tipo de dolor torácico y la probabilidad de enfermedades cardíacas (coeficiente 1.39852, p-valor 0.00572). Los mayores niveles de este tipo de dolor están asociados con un aumento en la probabilidad de enfermedades cardíacas.
++ **thalachh (Frecuencia cardíaca máxima alcanzada)** : No se encuentra una asociación significativa (coeficiente 0.02113, p-valor 0.36625) con la ocurrencia de enfermedades cardíacas en este modelo. Es importante tener en cuenta que su efecto parece no ser significativo en la predicción de enfermedades cardíacas.
++ **thall (Tasa de mortalidad)** : Muestra una relación negativa significativa con las enfermedades cardíacas (-1.62496, p-valor 0.02521). Niveles más altos de esta variable se relacionan con una disminución en la probabilidad de enfermedades cardíacas.
++ **exng (Angina inducida por el ejercicio)** : No muestra una relación significativa (p-valor alto: 0.82945) con la presencia de enfermedades cardíacas en este modelo. No parece ser un factor determinante en la predicción de enfermedades cardíacas según este análisis.
++ **slp (Pendiente del segmento ST máximo del ejercicio)** : Indica una posible asociación positiva (coeficiente 1.49037), aunque no es estadísticamente significativa al 95% (p-valor 0.10608). Esta variable podría tener cierta influencia en la probabilidad de enfermedades cardíacas, aunque se requiere precaución al interpretar su efecto debido a su p-value relativamente alto.
++ **caa (Número de grandes vasos)** : Muestra una posible relación negativa (-1.05345), aunque no es estadísticamente significativa al 95% (p-valor 0.07702). Su efecto en la predicción de enfermedades cardíacas parece sugerir una disminución en la probabilidad, pero se necesitarían más datos para confirmar su influencia.
++ **oldpeak (Depresión inducida por el ejercicio)** : En este modelo, la variable "oldpeak" no muestra una asociación significativa (coeficiente 0.03849, p-valor 0.92685) con la presencia de enfermedades cardíacas. Según este análisis, la depresión del segmento ST inducida por el ejercicio no parece influir en la probabilidad de ocurrencia de enfermedades cardíacas.
 
-En resumen, las variables cp (Tipo de dolor torácico) y thall (Frecuencia cardíaca máxima alcanzada) parecen ser las más influyentes para predecir la ocurrencia de enfermedades cardíacas en este modelo, mientras que otras variables como thalachh, exng, slp y caa muestran asociaciones que podrían ser significativas a diferentes niveles de confianza o podrían necesitar más datos para una conclusión más sólida.
+En resumen, las variables "cp" (Tipo de dolor torácico) y "thall" (Tasa de mortalidad) parecen ser las más influyentes para predecir la ocurrencia de enfermedades cardíacas en este modelo. Otras variables como "slp", "caa", "thalachh" y "exng" muestran asociaciones que podrían ser relevantes a diferentes niveles de confianza o podrían necesitar más datos para una conclusión más sólida.
 
-El AIC del modelo es 56.656, lo que sugiere que este modelo podría mejorar con ajustes adicionales o la inclusión de más variables predictoras.
-
-La deviance residual es significativamente menor que la deviance nula, lo que sugiere que el modelo con las variables predictoras tiene un mejor ajuste que un modelo sin estas variables, lo que indica que las variables incluidas en el modelo explican parte de la variabilidad en la variable de salida (enfermedades cardíacas).
+El AIC del modelo es 58.647, lo que sugiere que este modelo podría mejorar con ajustes adicionales o la inclusión de más variables predictoras. La deviance residual es significativamente menor que la deviance nula, indicando que las variables incluidas en el modelo explican parte de la variabilidad en la presencia de enfermedades cardíacas.
 
 
 
 # Resolución del problema
 
-Los resultados obtenidos son esenciales para entender las posibles relaciones entre las variables estudiadas y la presencia de enfermedades cardíacas.
+Los hallazgos de este análisis proporcionan claridad sobre las variables más relevantes para predecir la ocurrencia de enfermedades cardíacas.
 
-Se identificaron algunas variables con asociaciones más fuertes con la presencia de enfermedades cardíacas, como el tipo de dolor torácico ('cp'), la frecuencia cardíaca máxima alcanzada ('thalachh'), y el número de grandes vasos ('caa'). Estas variables podrían considerarse como importantes indicadores o factores de riesgo para las enfermedades cardíacas.
 
-En contraste, otras variables como la edad ('age'), la presión arterial en reposo ('trtbps'), y el nivel de colesterol en sangre ('chol') no mostraron asociaciones significativas con la presencia de enfermedades cardíacas en este análisis.
+El tipo de dolor torácico (cp) y la tasa de mortalidad (thall) emergen como indicadores significativos de enfermedades cardíacas, mostrando asociaciones claras con la presencia de esta condición en el análisis de regresión logística. Además, la frecuencia cardíaca máxima alcanzada (thalachh) y el número de grandes vasos (caa) también muestran vínculos potenciales, aunque su confirmación estadística podría requerir más datos.
 
-Algunas variables, como la frecuencia cardíaca máxima ('thalachh'), aunque no mostraron asociación significativa en el modelo de regresión logística, tienen fuertes correlaciones con la presencia de enfermedades cardíacas según la matriz de correlaciones. Esto sugiere que podrían tener alguna influencia que quizás no se ha capturado completamente en el modelo actual.
-En cuanto a responder al problema, estos resultados proporcionan una comprensión inicial de qué variables pueden estar relacionadas con las enfermedades cardíacas, pero hay áreas que podrían necesitar más investigación o ajustes adicionales en el modelo. Se pueden formular hipótesis preliminares sobre las variables más influyentes, pero para una respuesta más completa al problema, se requeriría un análisis más detallado y quizás la inclusión de más variables predictoras o datos adicionales.
+La angina inducida por el ejercicio (exng) y la pendiente del segmento ST máximo del ejercicio (slp) no presentan asociaciones estadísticamente significativas con la presencia de enfermedades cardíacas según este análisis.
+
+La depresión inducida por el ejercicio (oldpeak), aunque no muestra asociación significativa, no parece influir en la probabilidad de ocurrencia de enfermedades cardíacas en este modelo.
+
+Estos resultados subrayan la importancia del dolor torácico y la tasa de mortalidad como predictores potenciales de enfermedades cardíacas. Sin embargo, se destaca la necesidad de mayor validación para algunas variables y la posibilidad de ajustes adicionales en el modelo, ya que algunos factores podrían tener influencias más sutiles o necesitar mayor evidencia para confirmar su contribución a la predicción de esta condición médica.
