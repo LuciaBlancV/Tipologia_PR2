@@ -53,12 +53,25 @@ A continuación se describe brevemente cada una de las columnas del dataset:
 ## Archivos
 
 **heart_PR2.Rmd/.:**: El documento contiene toda la información referente al código en lenguaje de programación R empleado para ejecutar en análisis de datos de la presente práctica.
+
 **heart_PR2.html/.:** Contiene toda la información generada en el codigo en lenguaje de programación R, en un formato de tipo .html, de tal forma que facilite la visualización de la información.
+
 **heart.xlsx/.:** Archivo de tipo .xlsx que contiene toda la información original relacionada en la base de datos.
+
 **heart_clean.xlsx/.:** Archivo de tipo .xlsx que contiene información ya habiando aplicado metodos de limpieza de datos.
 
 
 
 ## Recursos:
 
-Calvo M., Subirats L., Pérez D. (2019). Introducción a la limpieza y análisis de los datos. Editorial UOC. Megan Squire (2015). Clean Data. Packt Publishing Ltd. Jiawei Han, Micheine Kamber, Jian Pei (2012). Data mining: concepts and techniques. Morgan Kaufmann. Jason W. Osborne (2010). Data Cleaning Basics: Best Practices in Dealing with Extreme Scores. Newborn and Infant Nursing Reviews; 10 (1): pp. 1527-3369. Peter Dalgaard (2008). Introductory statistics with R. Springer Science & Business Media. Wes McKinney (2012). Python for Data Analysis. O’Reilley Media, Inc.
+Calvo M., Subirats L., Pérez D. (2019). Introducción a la limpieza y análisis de los datos. Editorial UOC. 
+
+Megan Squire (2015). Clean Data. Packt Publishing Ltd. Jiawei Han, Micheine Kamber, 
+
+Jian Pei (2012). Data mining: concepts and techniques. 
+
+Morgan Kaufmann. Jason W. Osborne (2010). Data Cleaning Basics: Best Practices in Dealing with Extreme Scores. Newborn and Infant Nursing Reviews; 10 (1): pp. 1527-3369. 
+
+Peter Dalgaard (2008). Introductory statistics with R. Springer Science & Business Media. 
+
+Wes McKinney (2012). Python for Data Analysis. O’Reilley Media, Inc.
