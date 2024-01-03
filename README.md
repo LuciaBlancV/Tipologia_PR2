@@ -5,6 +5,13 @@
 
 Este proyecto es una práctica de la asignatura "Tipología y ciclo de vida de los datos" del Máster en Ciencia de Datos de la UOC.
 
+## Grupo de trabajo:
+
+Sergi Sánchez Romero
+
+Lucia Blanc Velázquez
+
+
 ## Objetivo
 El objetivo el presente proyecto es realizar un análisis de las propiedades de una gran cantidad de variables que predicen los infartos del corazón, con el fin de evaluar cuales son las características que mayor predicen si alguien desarrollará o no una enfermedad cardíaca, y en consecuente sufrirá o no un infarto. 
 
@@ -24,6 +31,7 @@ A continuación se describe brevemente cada una de las columnas del dataset:
  - Value 2 : Angina atípica (ATA)
  - Value 3 : Dolor no-anginal (NAP)
  - Value 4 : Asintomático (ASY)
+   
 4. trtbps : Presión arterial en reposo (in mm Hg)
 5. chol : Colesterol en mg/dl obtenido a través del sensor de IMC
 6. fbs : (Glucemia en ayunas > 120 mg/dl) (1 = true; 0 = false)
@@ -31,6 +39,7 @@ A continuación se describe brevemente cada una de las columnas del dataset:
  - Value 0 : Normal
  - Value 1 : Presentar anomalías de la onda ST-T (inversión de la onda T y/o elevación o depresión del ST de > 0,05 mV)
  - Value 2 : Hipertrofia ventricular izquierda probable o definida según los criterios de Estes
+   
 8. thalachh : Frecuencia cardiaca máxima alcanzada
 9. exng : Angina inducida por el ejercicio (1 = si; 0 = no)
 10. oldpeak : Pico previo
@@ -39,3 +48,17 @@ A continuación se describe brevemente cada una de las columnas del dataset:
 13. thall : Tasa de mortalidad
 14. output : 0= menor probabilidad de infarto 1= mayor probabilidad de infarto
 
+
+
+## Archivos
+
+**heart_PR2.Rmd/.:**: El documento contiene toda la información referente al código en lenguaje de programación R empleado para ejecutar en análisis de datos de la presente práctica.
+**heart_PR2.html/.:** Contiene toda la información generada en el codigo en lenguaje de programación R, en un formato de tipo .html, de tal forma que facilite la visualización de la información.
+**heart.xlsx/.:** Archivo de tipo .xlsx que contiene toda la información original relacionada en la base de datos.
+**heart_clean.xlsx/.:** Archivo de tipo .xlsx que contiene información ya habiando aplicado metodos de limpieza de datos.
+
+
+
+## Recursos:
+
+Calvo M., Subirats L., Pérez D. (2019). Introducción a la limpieza y análisis de los datos. Editorial UOC. Megan Squire (2015). Clean Data. Packt Publishing Ltd. Jiawei Han, Micheine Kamber, Jian Pei (2012). Data mining: concepts and techniques. Morgan Kaufmann. Jason W. Osborne (2010). Data Cleaning Basics: Best Practices in Dealing with Extreme Scores. Newborn and Infant Nursing Reviews; 10 (1): pp. 1527-3369. Peter Dalgaard (2008). Introductory statistics with R. Springer Science & Business Media. Wes McKinney (2012). Python for Data Analysis. O’Reilley Media, Inc.
