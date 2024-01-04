@@ -64,6 +64,8 @@ A continuación se describe brevemente cada una de las columnas del dataset:
 
 
 ## Contribuciones 
+| Contribución        | Firma           | 
+| ------------- |-------------| 
 | Investigación previa        | Lucia Blanc Velázquez y Sergi Sánchez Romero          | 
 | Redacción de las respuestas |Lucia Blanc Velázquez y Sergi Sánchez Romero    | 
 | Desarrollo del código        |Lucia Blanc Velázquez y Sergi Sánchez Romero             | 
