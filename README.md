@@ -20,7 +20,8 @@ El objetivo el presente proyecto es realizar un análisis de las propiedades de 
 El conjunto de datos escogido para esta práctica, se titula: *“Heart Attack Analysis & Prediction dataset”*, el cual tiene como objetivo detectar aquellos factores que pueden actuar como potenciales precursores de las enfermedades cardiovasculares, y así ayudar a la detección y gestión temprana mediante la creación de un modelo. En el conjunto de datos se contemplan un total de 14 características importantes que pueden ayudar a la predicción de desarrollar o no una enfermedad cardíaca. Según la información encontrada, se sabe que las enfermedades cardiovasculares ocupan un porcentaje del 31% en relación a las muertes que se producen en el mundo cada año, por lo que supone una de las causas principales de muerte. Es importane tener en cuenta cuales son los atributos que pueden conllevar a un mayor riesgo cardiovascular o al desarrollo de enfermedad cardiovascular, por lo que, el objetivo es predecir que variables influyen más en este desarrollo.
 
 Información encontrada en la web de [kaggle](https://www.kaggle.com/datasets),
-concretamente en el siguiente enlace: https://www.kaggle.com/datasets/rashikrahmanpritom/heart-attack-analysis-predictiondataset
+concretamente en el siguiente enlace: https://www.kaggle.com/datasets/rashikrahmanpritom/heart-attack-analysis-prediction-dataset
+
 
 A continuación se describe brevemente cada una de las columnas del dataset: 
 
