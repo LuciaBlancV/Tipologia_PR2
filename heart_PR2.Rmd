@@ -113,10 +113,10 @@ A continuación, realizamos la descripción de las variables que hay en el datas
 ******
 Puede ser el resultado de adicionar diferentes datasets o una subselección útil de los datos originales, en base al objetivo que se quiera conseguir.
 
-
+<h3 style="background-color: #0E4D83; color: white;">3.1. Carga de Librerías</h3> 
 Primero de todo, cargamos las librerías que vamos a usar durante la práctica
 ```{r message= FALSE, warning=FALSE}
-
+if (!require('csv')) install.packages('csv');library(csv)
 if (!require('dplyr')) install.packages('dplyr');library(dplyr)
 if (!require('ggplot2')) install.packages('ggplot2');library(ggplot2)
 if (!require('reshape')) install.packages('reshape');library(reshape)
@@ -141,29 +141,78 @@ setwd(dir)
 ```
 
 
-<h3 style="background-color: #2677AF; color: white;">Carga del dataset</h3>
+<h3 style="background-color: #2677AF; color: white;">3.2. Carga del dataset</h3>
 Cargamos los datos de la base de datos "heart" y tipificamos las variables que tiene el conjunto de datos como corresponde
 ```{r}
-library(readxl)
-heart <- read_excel("heart.xlsx")
+library(csv)
+heart <- read.csv("heart.csv", header=T,sep=",")
+```
 
 
+<h3 style="background-color: #2677AF; color: white;">3.3. Observación del dataset</h3>
+```{r}
 # Mostramos los primeros registros del conjunto de dtos, con el fin de ver una aproximación de como es el conjunto y su estructura
 head(heart, max(10))
 str(heart)
+
+# Obtener la cantidad de filas y columnas
+dimensiones <- dim(heart)
+num_filas <- dimensiones[1]
+num_columnas <- dimensiones[2]
+
+# Imprimir el mensaje
+mensaje <- paste("El conjunto tiene", num_filas, "filas y", num_columnas, "columnas.")
+print(mensaje)
+
+
+# Obtenemos un primer vistazo estadístico de cada atirbuto
+describeBy(heart)
 ```
-El conjunto de datos consiste en 14 variables numéricas (columnas continuas).
 
-
-
-
-******
 <h2 style="background-color: #0E4D83; color: white;">4.Limpieza de los datos</h2>
-******
-
-<h3 style="background-color: #2677AF; color: white;">Classificación de variables</h3>
+Primero de todo, hacemos una matriz de correlaciones de todo el conjunto, para ver como son los datos
 ```{r}
-library(dplyr)
+library(corrplot)
+# Convirtimos todas las variables a numéricas (asegúrate de que las variables sean numéricas)
+heart_numeric <- sapply(heart, as.numeric)
+
+ # Calculamos la matriz de correlación
+correlation_tab <- cor(heart_numeric)
+
+library(RColorBrewer)
+
+# Definimos una nueva paleta de colores
+new_col <- colorRampPalette(c("#0000CD", "#7D26CD", "#FFFFFF","#FF6347","#FF0000"))
+
+# Crear la matriz de correlación con corrplot y personalización adicional
+corrplot(correlation_tab, 
+         method = "color", 
+         tl.col = "black", 
+         tl.srt = 30, 
+         tl.cex = 0.6, 
+         cl.cex = 0.6, 
+         col = new_col(200), 
+         addCoef.col = "black", 
+         order = "AOE", 
+         number.cex = 0.6)
+
+
+```
+**Observaciones**
+Según la matriz de correlaciones inicial, presentada anteriormente, donde las correlaciones positivas se muestran en color rojo y las negativas en color azul fuerte podemos ver cuales son las variables con mayores intensidad de color, guiando así la significación de los coeficientes de correlación. 
+
+- La variable de interés (output) se relaciona positivamente con slp, thalachh y cp, y negativamente con caa, oldpeal, exng y thall.
+- No existe ningún tipo de relación entre la variable output y la variable chol ni la variable fbs.
+- Hay una fuerte correlación negativa entre slp y oldpeak (-0.58), y una correlación positiva entre slp y thalachh. 
+- Las variables cp y exng estan correlacionadas negativamente, igual que la edad (age) y la variable thalachh.
+
+
+
+
+<h3 style="background-color: #2677AF; color: white;">4.1 Valores nulos y/o vacíos</h3>
+
+Debido que algunas de las variables del conjunto de datos tienen tipos de datos incorrectos, debemos transformar los tipos de datos antes del análisis
+```{r}
 # Clasificamos las variables en numéricas o en categóricas
 # Numéricas
 heart <- heart%>%
@@ -171,28 +220,18 @@ heart <- heart%>%
 
 # Categóricas
 heart <- heart%>%
-  mutate_at(vars(sex, cp, fbs, restecg, exng, slp, thall, caa, output), as.character)
+  mutate_at(vars(sex, cp, fbs, restecg, exng, slp, thall, caa, output), as.factor)
 
-
-# Observamos las dimensiones del dataset "heart"
-heart.cols<-dim(heart)[2]
-heart.rows<-dim(heart)[1]
-
-# Obtenemos un primer vistazo estadístico de cada atirbuto
-describeBy(heart)
+introduce(heart)
 ```
+Según la tabla y el barplot creado, podemos ver como el conjunto de datos heart tiene 14 atributos y 303 observaciones, y contiene un total de 9 columnas discretas y 5 columnas continuas.
 
-
-<h3 style="background-color: #2677AF; color: white;">Dimensión del conjunto de datos</h3>
 
 Con la librería DataExplorer vemos una vista general del conjunto de datos de análisis una vez seleccionados, basandonos en los valores faltantes, columnas discretas y continuas.
 ```{r}
-library(DataExplorer)
 plot_intro(heart, title = "Información Dataset")
-introduce(heart)
 ```
-Según la tabla y el barplot creado, podemos ver como el conjunto de datos heart tiene 14 atributos y 303 observaciones, el cual contiene un total de 9 columnas discretas y 5 columnas continuas.
-Observamos como no hay valores faltantes.
+Tal y como vemos en el barplot creado, podemos ver la distirbución del conjunto como en la tabla anterior y también observamos como no hay valores faltantes.
 
 
 
@@ -210,41 +249,7 @@ round((sum(heart$output == 0)/nrow(heart))*100,2)
 
 
 
-<h3 style="background-color: #2677AF; color: white;">Arreglamos el conjunto de datos</h3>
-
-
-Primero de todo, hacemos una matriz de correlaciones de todo el conjunto
-<h4 style="background-color: #2677AF; color: white;">Matriz de Correlaciones</h4>
-```{r}
-# Convirtimos todas las variables a numéricas (asegúrate de que las variables sean numéricas)
-heart_numeric <- sapply(heart, as.numeric)
-
- # Calculamos la matriz de correlación
-correlation_tab <- cor(heart_numeric)
-
-library(RColorBrewer)
-
-# Definimos una nueva paleta de colores
-new_col <- colorRampPalette(c("#0000CD", "#7D26CD", "#FFFFFF","#FF6347","#FF0000"))
-
-# Creamos la matriz de correlación con corrplot y personalización adicional
-corrplot(correlation_tab, 
-         method = "color", 
-         tl.col = "black", 
-         tl.srt = 45, 
-         tl.cex = 0.8, 
-         cl.cex = 0.8, 
-         col = new_col(200), 
-         addCoef.col = "black", 
-         order = "AOE", 
-         number.cex = 0.8,
-         title = "Matriz de Correlación") 
-```
-
-
-
-
-<h4 style="background-color: #2677AF; color: white;">Valores Duplicados</h4>
+<h4 style="background-color: #2677AF; color: white;">4.2. Valores Duplicados</h4>
 ```{r}
 # Valores duplicados
 get_duplicates <- function(heart){
@@ -268,21 +273,188 @@ Ya no tenemos valores duplicados en el conjunto de datos
 
 
 
+<h3 style="background-color: #2677AF; color: white;">4.3. Valores Extremos</h3>
+
+Seguidamente es importante estudiar la posibilidad de valores outliers para las variables numéricas de la base de datos
+```{r}
+# Cargamos librerías necesarias
+library(ggplot2)
+
+# Reorganizamos el dataframe para plotear las variables seleccionadas
+selected_vars <- heart[, c("age", "oldpeak", "chol", "thalachh", "trtbps")]
+selected_vars <- stack(selected_vars)
+
+# Agregamos la columna 'output' al dataframe para usarla en el color de los puntos
+selected_vars$output <- heart$output
+
+# Creamos un gráfico de cajas con puntos superpuestos para las variables numéricas seleccionadas
+ggplot(selected_vars, aes(x = ind, y = values, color = as.factor(output))) +
+  geom_boxplot(alpha = 0.7, outlier.size = 2) +  
+  geom_jitter(alpha = 0.3, size = 0.5) +  
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
+  labs(x = "Variables", y = "Valores") +
+  scale_color_brewer(palette = "Set1", name = "Probabilidad de Infarto", labels = c('0 - Menor Probabilidad', '1 - Mayor Probabilidad')) + 
+  ggtitle("Gráfico de Cajas con Puntos - Variables Numéricas y Outliers")
+
+```
+**Observaciones**
+Podemos ver como hay puntos muy alejados de las medias y de los boxplots creados en las variables chol, thalachh y trtbps, por lo que, vamos a estudiar si mediante una función creada según las desviaciones estandard, se eliminan estos valores y dejamos el conjunto de datos sin potenciales valores outliers.
+
+
+
+<h3 style="background-color: #2677AF; color: white;">4.4. Limpieza de Valores Extremos </h3>
+Para limpiar los valores atípicos (outliers) usamos un enfoque del rango intercuartílico (IQR), el cual es una medida de dispersión que se bada en la diferencia entre el tercer (Q3) y primer cuartil (Q1) del conjunto de datos
+```{r}
+# Creamos un dataframe de las variables de las cuales hemos de quitar outliers, excluyendo age y oldpeak
+df_outliers<-as.data.frame(heart %>%
+                  select("trtbps","thalachh","chol"))
+
+# Función para quitar outliers
+outliers <- function(x) { 
+ # IQR
+  Q1 <- quantile(x, probs=.25) 
+  Q3 <- quantile(x, probs=.75) 
+  iqr = Q3-Q1 
+ 
+ # Rango Superior
+ upper_limit = Q3 + (iqr*1.5) 
+ # Rango Inferior 
+ lower_limit = Q1 - (iqr*1.5) 
+ 
+ x > upper_limit | x < lower_limit 
+} 
+
+# Quitamos valores atípicos
+remove_outliers <- function(df_outliers, cols = names(df_outliers)) { 
+  for (col in cols) { 
+    df_outliers<- df_outliers[!outliers(df_outliers[[col]]),] 
+  } 
+  df_outliers 
+}
+
+# Una vez creada la función para quitar los outliers, creamos un nuevo conjutno de datos sin los outliers 
+heart_clean<-remove_outliers(heart,c("trtbps","thalachh", "chol"))
+
+
+# Observamos el cambio de las dimensiones
+dim(heart_clean)
+```
+Los valores potenciales outliers han sido eliminados y ahora tenemos el conjunto de datos con un total de 287 filas y 14 variables. 
+
+
+**Resultado de Limpieza de Outliers**
+```{r}
+# Reorganizamos el dataframe para plotear las variables seleccionadas
+selected_vars <- heart_clean[, c("age", "oldpeak", "chol", "thalachh", "trtbps")]
+selected_vars <- stack(selected_vars)
+
+# Agregamos la columna 'output' al dataframe para usarla en el color de los puntos
+selected_vars$output <- heart_clean$output
+
+# Creamos un gráfico de cajas con puntos superpuestos para las variables numéricas seleccionadas
+ggplot(selected_vars, aes(x = ind, y = values, color = as.factor(output))) +
+  geom_boxplot(alpha = 0.7, outlier.size = 2) +  
+  geom_jitter(alpha = 0.3, size = 0.5) +  
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
+  labs(x = "Variables", y = "Valores") +
+  scale_color_brewer(palette = "Set1", name = "Probabilidad de Infarto", labels = c('0 - Menor Probabilidad', '1 - Mayor Probabilidad')) + 
+  ggtitle("Gráfico de Cajas con Puntos - Variables Numéricas y Outliers")
+```
 
 
 
 
 
 
-<h3 style="background-color: #2677AF; color: white;">Análisis Univariado</h3>
+<h3 style="background-color: #2677AF; color: white;">4.5. Comprobación de la normalidad y homogeneidad de la varianza.</h3>
 
 
-<h4 style="background-color: #2677AF; color: white;">Variables Categóricas</h4>
+<h4 style="background-color: #2677AF; color: white;">4.5.1 Comprobación de la normalidad</h4>
+
+Para evaluar la normalidad de las variables seleccionadas, empleamos la prueba de Spahiro-Wilk
+```{r}
+# Usamos la prueba de Shapiro-Wilk para verificar la normalidad de cada variable numérica
+variables <- c("age", "trtbps", "chol", "thalachh", "oldpeak")
+resultados_shapiro <- lapply(heart_clean[variables], shapiro.test)
+names(resultados_shapiro) <- variables
+
+# Verificar la estructura de las variables seleccionadas en el conjunto de datos 'heart'
+str(heart_clean[, variables])
+# Mostramos los resultados
+print(resultados_shapiro)
+
+```
+Los resultados de la normalidad muestran que para cada una de las variables numéricas del conjunto de datos, excepto la variable chol, hay evidencia suficiente para rechazar la hipótesis nula y afirmar que los datos no siguen una distribución normal, pero como las observaciones son mayores a 30 se puede asumir.
+
+
+**Normalizamos los datos**
+A cotninuación normalizamos los datos con valores entre -1 y 1 para poder hacer análisis posteriores
+```{r}
+heart_clean
+# Normalizamos todas las columnas de heart_clean excepto la columna 'output' (si existe)
+heart_clean_n<-heart_clean
+
+if ("output" %in% colnames(heart_clean_n)) {
+  output_column <- heart_clean_n$output  # Guarda la columna 'output'
+  heart_clean_n <- heart_clean_n[, !names(heart_clean_n) %in% "output"]  # Elimina la columna 'output' para normalizar
+}
+
+# Convertir todas las columnas a tipo numérico
+heart_clean_numeric <- as.data.frame(lapply(heart_clean_n, as.numeric))
+
+
+# Normalizamos los datos
+heart_norm <- as.data.frame(scale(heart_clean_numeric))
+
+# Agregamos la columna 'output'
+if (exists("output_column")) {
+  heart_norm$output <- output_column
+}
+```
+
+
+<h4 style="background-color: #2677AF; color: white;">4.5.2 Comprobación de la varianza</h4>
+Calculamos las varianzas de las variables numéricas 'age', 'trtbps', 'chol', 'thalachh', y 'oldpeak', del conjunto, agrupadas según la probabilidad de sufrir o no un infarto. 
+```{r}
+# Calculamos la varianza para cada variable según los niveles de 'output'
+for (variable in variables) {
+  var_por_output <- tapply(heart_norm[[variable]], heart_norm$output, var)
+  mensaje <- paste("Varianza de", variable, "según 'output':")
+  print(mensaje)
+  print(var_por_output)
+}
+
+# Variables a analizar
+variables <- c('age', 'trtbps', 'chol', 'thalachh', 'oldpeak')
+
+# Calculamos la varianza para cada variable según los niveles de 'output'
+resultados_var <- aggregate(. ~ output, data = heart_norm[, c('output', variables)], var)
+print(resultados_var)
+
+```
+Estos resultado muestran la media de cada variable numérica (normalizada) para dos grupos distintos definidos por los niveles '0' y '1' de la variable 'output', los cuales indican menor o mayor probabilidad de ataque cardíaco.
+
+
+
+
+
+
+
+
+<h2 style="background-color: #2677AF; color: white;">5. Análisis de Datos</h2>
+
+
+<h3 style="background-color: #2677AF; color: white;">5.1. Análisis Univariado</h3>
+
+
+<h4 style="background-color: #2677AF; color: white;">5.1.1 Variables Categóricas</h4>
 
 Primero discretizaremos las variables categóricas, asignando a cada valor la correspondiente definición de la variable
 ```{r}
 # Hacemos cópia del conjunto para usarlo solamente en este análisis:
-heart_discr<-heart
+heart_discr<-heart_clean
 
 # Sexo del paciente (sex)
 heart_discr$sex <- ifelse(heart_discr$sex == 0, "Mujer", "Hombre")
@@ -307,6 +479,8 @@ heart_discr$slp <- factor(heart_discr$slp, levels = c(0, 1, 2), labels = c("Tipo
 
 # Tasa de Mortalidad (thall)
 heart_discr$thall <- factor(heart_discr$thall, levels = c(0, 1, 2, 3), labels = c("Thal0", "Thal1", "Thal2", "Thal3"))
+
+
 
 # Ouput/Target (0= menor probabilidad de infarto 1= mayor probabilidad de infarto)
 heart_discr$output <- factor(heart_discr$output, levels = c(0, 1), labels = c("Menor probabilidad", "Mayor probabilidad"))
@@ -347,22 +521,24 @@ for (i in categorical_var) {
 
 Según el thall, el riesgo de infarto se alcanza en las personas con frecuencia cardíaca máxima(clase 2).
 En la característica sexo, la clase 1 tiene más posibilidades de sufrir un infarto que la clase 0.
+
 Las probabilidades de sufrir un infarto son mayores en la clase 0 de sexo.
+
 Comparando con el análisis de correlación, la característica fbs muestra la menor correlación con la salida.
+
 En caa, las personas con clase, son más propensas a sufrir un ataque al corazón que las personas con clase 4, 3 y 2.
+
 Según la característica cp, las personas con dolor no anginoso tienen más probabilidades de sufrir un infarto que las personas con dolor anginoso atípico y típico.
+
 En exng, las personas con clase 1 tienen altas probabilidades de riesgo de infarto, mientras que las personas con clase 0 son menos propensas al infarto.
+
 La característica Slp muestra que la clase 0 tiene menos correlación con el resultado que las clases 1 y 2.
 
 
 
 
 
-
-
-
-
-<h4 style="background-color: #2677AF; color: white;">Variables Numéricas</h4>
+<h4 style="background-color: #2677AF; color: white;">5.1.2 Variables Numéricas</h4>
 A continuación estudiamos la estadística básica de las variables numéricas del conjunto
 ```{r}
 # Creamos un gráfico de pares con las variables numéricas del conjunto de datos "heart"
@@ -370,7 +546,7 @@ A continuación estudiamos la estadística básica de las variables numéricas d
 options(repr.plot.width = 20, repr.plot.height = 20)  
 
 # Creamos un gráfico de pares con las variables numéricas del conjunto de datos "heart"
-pair_plot <- ggpairs(heart, columns = c("age", "trtbps", "chol", "thalachh", "oldpeak"),
+pair_plot <- ggpairs(heart_clean, columns = c("age", "trtbps", "chol", "thalachh", "oldpeak"),
                      aes(color = as.factor(output), alpha = 0.5),
                      lower = list(continuous = "smooth"),
                      palette = c('blue', 'red')) +  # Usamos la misma paleta de colores
@@ -381,7 +557,8 @@ pair_plot <- ggpairs(heart, columns = c("age", "trtbps", "chol", "thalachh", "ol
         legend.title = element_text(face = "bold")) +
   ggtitle("Variables Numéricas") +
   labs(color = "Output", alpha = "Transparencia")
-pair_plot
+
+
 # Convertimos el gráfico a un gráfico interactivo con plotly
 interactive_plot <- ggplotly(pair_plot)
 
@@ -392,186 +569,132 @@ interactive_plot
 
 
 
+<h3 style="background-color: #0E4D83; color: white;">5.2. Modelo No Supervisado: Clustering</h3>
 
+Un modelo no supervisado de clustering busca agrupar datos similares en conjuntos o clústeres. En este caso, la distancia Manhattan es una medida de distancia utilizada en clustering para calcular la diferencia entre dos puntos en un espacio multidimensional.
 
-<h3 style="background-color: #2677AF; color: white;">Valores Outliers</h3>
+En este caso, puede ser útil para la identificación de subgrupos de pacientes con perfiles de riesgo similares de enfermedad cardíaca, lo que podría ser útil para personalizar tratamientos, identificar factores de riesgo comunes o incluso guiar futuras investigaciones médicas.
 
-Seguidamente es importante estudiar la posibilidad de valores outliers para las variables numéricas de la base de datos
+Para poder aplicar el logaritmo, escalamos los datos y mostramos el dendograma para saber donde determinar el corte y escoger el número de clústers.
 ```{r}
-# Cargamos librerías necesarias
-library(ggplot2)
+heart_norm <- as.data.frame(sapply(heart_norm, as.numeric))
 
-# Reorganizamos el dataframe para plotear las variables seleccionadas
-selected_vars <- heart[, c("age", "oldpeak", "chol", "thalachh", "trtbps")]
-selected_vars <- stack(selected_vars)
+# Escalamos los datos
+heart_scale<-scale(heart_norm)
 
-# Agregamos la columna 'output' al dataframe para usarla en el color de los puntos
-selected_vars$output <- heart$output
+#Calculamos la distancia manhattan
+dist_manh<-dist(heart_scale, method = 'manhattan')
 
-# Creamos un gráfico de cajas con puntos superpuestos para las variables numéricas seleccionadas
-ggplot(selected_vars, aes(x = ind, y = values, color = as.factor(output))) +
-  geom_boxplot(alpha = 0.7, outlier.size = 2) +  
-  geom_jitter(alpha = 0.3, size = 0.5) +  
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
-  labs(x = "Variables", y = "Valores") +
-  scale_color_brewer(palette = "Set1", name = "Probabilidad de Infarto", labels = c('0 - Menor Probabilidad', '1 - Mayor Probabilidad')) + 
-  ggtitle("Gráfico de Cajas con Puntos - Variables Numéricas y Outliers")
-
-
-```
-**Observaciones**
-Podemos ver como hay puntos muy alejados de las medias y de los boxplots creados en las variables chol, thalachh y trtbps, por lo que, vamos a estudiar si mediante una función creada según las desviaciones estandard, se eliminan estos valores y dejamos el conjunto de datos sin potenciales valores outliers.
-
-
-<h3 style="background-color: #2677AF; color: white;">Limpieza de outliers </h3>
-Para limpiar los outliers usamos un enfoque de desviaciones estándar (SD), el cual usa la distribución normal de los datos.
-```{r}
-# Creamos un dataframe de las variables de las cuales hemos de quitar outliers, excluyendo age y oldpeak
-df_outliers<-as.data.frame(heart %>%
-                  select("trtbps","thalachh","chol"))
-
-# Función para quitar outliers
-remove_outliers_sd <- function(df_outliers, threshold = 5) {
-  # Loop a través de cada columna numérica del dataframe
-  for (col in names(df_outliers)) {
-    if(is.numeric(df_outliers[[col]])) {
-      col_mean <- mean(df_outliers[[col]], na.rm = TRUE)
-      col_sd <- sd(df_outliers[[col]], na.rm = TRUE)
-      df_outliers <- df_outliers[abs((df_outliers[[col]] - col_mean) / col_sd) <= threshold, ]
-    }
-  }
-  df_outliers
-}
-
-
-heart_clean <-remove_outliers_sd(heart,c("trtbps" ,"thalachh", "chol"))
-
-# Observamos el cambio de las dimensiones
-dim(heart_clean)
-```
-Los valores potenciales outliers no han sido eliminados debido que pueden ser posibles valores de las variables, con lo que, tenemos el conjunto de datos limpio y nos hemos asegurado de que no hay ningún valor que se aleje de la realidad. 
-
-
-
-
-
-
-
-******
-<h2 style="background-color: #0E4D83; color: white;">5. Análisis de los datos</h2>
-******
-
-
-## Selección de los grupos de datos que se quieren analizar/comparar 
-(p.ej., si se van a comparar grupos de datos, ¿cuáles son estos grupos y qué tipo de análisis se van a aplicar?)
-
-
-Para analizar y comparar los datos seleccionados, dividiremos el enfoque en tres partes, centrándonos en la predicción de ataques cardíacos (variable "output") en relación con las variables de interés.
-Dividiremos el análisis en tres partes sobre las variables que anteriormente hemos seleccionado. El objetivo y la respuesta a contestar es el tratar de aclarar que tipo de condiciones ayudan a predecir con mejor medida un ataque al corazón. 
-
-
-Los análisis que realizaremos son los siguientes
-
-Matriz de Correlaciones: Exploraremos las relaciones lineales entre todas las variables seleccionadas. Este análisis nos mostrará cómo se correlacionan entre sí las variables, permitiendo identificar asociaciones y patrones de relación, lo que podría sugerir qué variables están más estrechamente relacionadas con la presencia de ataques cardíacos.
-
-ANOVA (Análisis Comparativo): Evaluaremos la diferencia en la variable de salida ("output") en función de todas las variables incluidas también en la matriz de correlación. Esto nos permite determinar si hay diferencias significativas en la media de "output" entre los distintos niveles de estas variables.
-
-Modelo Predictivo (Regresión Logística): Utilizaremos una regresión logística para predecir la ocurrencia de ataques cardíacos ("output") basándonos en las variables con una correlación relevante en la matriz anterior. Analizaremos variables como el tipo de dolor torácico, frecuencia cardíaca máxima alcanzada, tasa de mortalidad, angina inducida por el ejercicio, pendiente del segmento ST máximo del ejercicio y el número de grandes buques. El objetivo es comprender qué variables son predictivas de ataques cardíacos y en qué medida influyen en la predicción.
-
-Estos análisis proporcionarán una visión detallada sobre cómo las diferentes variables están relacionadas con la presencia de ataques cardíacos y qué factores pueden ser más relevantes para predecirlos.
-
-
-## Comprobación de la normalidad y homogeneidad de la varianza.
-
-### Comprobación de Normalidad
-Para evaluar la normalidad de las variables seleccionadas, empleamos la prueba de Spahiro-Wilk
-```{r}
-# Una vez tenemos los datos discretizados, comprobamos la normalidad
-
-# Usamos la prueba de Shapiro-Wilk para verificar la normalidad de cada variable numérica
-variables <- c("age", "trtbps", "chol", "thalachh", "oldpeak")
-resultados_shapiro <- lapply(heart_clean[variables], shapiro.test)
-names(resultados_shapiro) <- variables
-
-# Verificar la estructura de las variables seleccionadas en el conjunto de datos 'heart'
-str(heart_clean[, variables])
-# Mostramos los resultados
-print(resultados_shapiro)
-
-```
-Los resultados de la normalidad muestran que para la variable 'age' (edad) hay evidencia suficiente para rechazar la hipótesis nula y afirmar que los datos no siguen una distribución normal, igual que la variable 'trtbps' (presión arterial en reposo) y la variable 'oldpeak', donde la evidencia para rechazar la hipótesis de normalidad es más fuerte. 
-
-Por otro lado, ni la variable 'chol' (colesterol) ni la variable 'thalachh' (ritmo cardíaco máximo aclanzada) muestran suficiente evidencia para rechazar la hipótesis nula de normalidad, sugiriendo que los datos de ambas variables podrían seguir una distribución normal. 
-
-
-### Comprobación de Varianza
-Calculamos las varianzas de las variables numéricas agrupadas por categorías de edad. 
-Esto nos va a proporcionar una visión de como varían  'age', 'trtbps', 'chol', 'thalachh', y 'oldpeak'  en distintos grupos de edad en el riesgo de sufrir un ataque cardíaco.
-```{r}
+#A continuación usamos la variable creada para minimizar las diferencias dentro de los conglomerados mediante el método Ward
+hcluster<-hclust(dist_manh, method = "ward.D")
+hcluster
 
 ```
 
-
-Clasificamos la varible 'output' en dos categorías ('Yes' y 'No) para investigar las varianzas de las variables numéricas respecto a la probabilidad de sufrir un ataque cardíaco
 ```{r}
+library(dendextend)
+dendo<-as.dendrogram(hcluster)
+dendo_k<-find_k(dendo)
+plot(dendo_k)
+
+# Observamos como el número de clusters obtenido es 2
+plot(color_branches(dendo,k=dendo_k$nc)) #Hemos obtenido que el nombre de clusters será 2
+
+
+# Creamos la matriz de confusión
+grupos<-cutree(hcluster,k=2)
+table(grupos,heart_clean$output)
+```
+Mediante la matriz de confusión creada, extraeremos el número de casos que se han clasificado correctamente y el porcentaje de precisión del modelo
+
+```{r}
+cat("Número de observaciones clasificadas correctamente =",121+121, "\n")
+cat("Número de observaciones clasificadas incorrectamente =", 8+37, "\n")
+cat("Precisión del modelo:",(242/(242+45))*100, "%\n")
+```
+La precisión del modelo es de un 84.32%.
+
+
+
+A continuación, visualizamos el cluster con la función fviz_cluster:
+```{r}
+library(cluster)
+library(factoextra)
+pam.res <- pam(heart_scale, 2)
+
+fviz_cluster(pam.res, geom = "point", ellipse.type = "norm",
+             show.clust.cent = TRUE,star.plot = TRUE)+
+  labs(title = "Resultados clustering K-means")+ theme_bw()
 
 ```
-Los resultados resaltan las diferencias en las varianzas de estas variables entre aquellos casos con mayor probabilidad de sufrir un ataque cardíaco y los que no.
 
-Esta evaluación proporciona una visión detallada de cómo las variables numéricas varían en relación con la edad y la probabilidad de sufrir un ataque cardíaco, lo que puede ser fundamental para comprender los factores de riesgo asociados
-
+Con una precisión del modelo del 84.33%, se puede decir que este modelo de clasificación logra predecir correctamente alrededor del 84% de los casos en el conjunto de datos evaluado. Esto indica una capacidad razonablemente buena para predecir la enfermedad cardíaca en función de las características utilizadas en el modelo. Sin embargo, en un futuro también sería valioso evaluar otras métricas de rendimiento para obtener una comprensión más completa de su eficacia, como la sensibilidad, la especificidad u otras métricas según el contexto médico específico.
 
 
 
 
-## Aplicación de pruebas estadísticas para comparar los grupos de datos
 
-
-### Analísis comparativo (ANOVA)
-
-Para realizar un análisis comparativo de todas las variables numéricas y la variable output, empleamos la prueba estadística de ANOVA, prueba que evalúa si hay diferencias significativas en la media de la variable de salida entre los distintos niveles de las variables numéricas.
-
-
-
-Parece que la frecuencia cardíaca máxima alcanzada (thalachh), el número de grandes vasos (caa), el tipo de dolor de pecho (cp), la presencia de angina inducida por el ejercicio (exng) y, en menor medida, el tipo de pendiente del segmento ST del electrocardiograma en reposo (slp), la tasa de mortalidad (thall) y la depresión inducida por el ejercicio (oldpeak), muestran asociaciones significativas con la presencia de enfermedades cardíacas. Estos hallazgos, indicados por los valores de p altamente significativos , podrían sugerir la importancia de estas variables en la predicción o diagnóstico de enfermedades cardíacas en el conjunto de datos analizado.
-
-Por otro lado, variables como la edad (age), el sexo (sex), el nivel de azúcar en sangre en ayunas (fbs), el resultado del electrocardiograma en reposo (restecg), la presión arterial en reposo (trtbps) y el colesterol (chol) no parecen demostrar una asociación significativa con la variable de salida (output) en este análisis, ya que sus valores p no alcanzan niveles de significancia estadística.
-
-Estos resultados proporcionan una visión inicial sobre qué variables podrían ser más relevantes al abordar problemas relacionados con enfermedades cardíacas en este contexto específico. Sin embargo, es importante tener en cuenta que estos hallazgos pueden requerir una validación adicional o un análisis más detallado para confirmar su relevancia clínica o predictiva, como lo haremos a continuación mediante un modelo de regresión logística
-
-
-
-### Modelado Predictivo (Regresión logística)
-Para construir un modelo predictivo usando regresión logística con las variables seleccionadas del ANOVA anterior, usamos la función glm().
+<h3 style="background-color: #0E4D83; color: white;">5.3. Modelo Supervisado: Regressión Logística</h3>
+Este análisis busca entender cómo diferentes variables pueden influir en una variable de salida específica. En este caso, se trata de predecir un cierto resultado,es decir, si alguien tiene cierta enfermedad cardíaca o no (ouput).
 ```{r}
+# Codificamos la variable objetivo como factor
+heart_clean$output <- factor(heart_clean$output)
 
+heart_clean <- as.data.frame(sapply(heart_clean, as.numeric))
+
+# Reemplazamos los valores 2 por 0 en la columna "output"
+heart_clean$output[heart_clean$output == 1] <- 0
+heart_clean$output[heart_clean$output == 2] <- 1
+
+# Dividimos el conjunto de datos en conjunto de entrenamiento y conjunto de prueba
+library(caTools)
+set.seed(123)
+split = sample.split(heart_clean$output, SplitRatio = 0.75)
+training_set = subset(heart_clean, split == TRUE)
+test_set = subset(heart_clean, split == FALSE)
+
+# Escalamos de características
+training_set[-14] = scale(training_set[-14])
+test_set[-14] = scale(test_set[-14])
+
+# Ajustamos la regresión logística al conjunto de entrenamiento
+classifier = glm(formula = output ~ age+ sex + cp + trtbps+chol+fbs+restecg+thalachh+exng+oldpeak+slp+caa+thall,
+                 family = binomial,
+                 data = training_set)
+summary(classifier)
+
+# Predecimos los resultados del conjunto de prueba
+prob_pred = predict(classifier, type = 'response', newdata = test_set[-14])
+y_pred = ifelse(prob_pred > 0.5, 1, 0)
+
+# Creamos la Matriz de Confusión
+cm = table(test_set[, 14], y_pred > 0.5)
 ```
-El modelo de regresión logística tiene como objetivo predecir la probabilidad de ocurrencia de enfermedades cardíacas (output) a partir de un conjunto de variables predictoras (cp, thalachh, thall, oldpeak, exng, slp y caa).
-
-+ **cp (Tipo de dolor torácico)** : Existe una relación positiva significativa entre el tipo de dolor torácico y la probabilidad de enfermedades cardíacas (coeficiente 1.39852, p-valor 0.00572). Los mayores niveles de este tipo de dolor están asociados con un aumento en la probabilidad de enfermedades cardíacas.
-+ **thalachh (Frecuencia cardíaca máxima alcanzada)** : No se encuentra una asociación significativa (coeficiente 0.02113, p-valor 0.36625) con la ocurrencia de enfermedades cardíacas en este modelo. Es importante tener en cuenta que su efecto parece no ser significativo en la predicción de enfermedades cardíacas.
-+ **thall (Tasa de mortalidad)** : Muestra una relación negativa significativa con las enfermedades cardíacas (-1.62496, p-valor 0.02521). Niveles más altos de esta variable se relacionan con una disminución en la probabilidad de enfermedades cardíacas.
-+ **exng (Angina inducida por el ejercicio)** : No muestra una relación significativa (p-valor alto: 0.82945) con la presencia de enfermedades cardíacas en este modelo. No parece ser un factor determinante en la predicción de enfermedades cardíacas según este análisis.
-+ **slp (Pendiente del segmento ST máximo del ejercicio)** : Indica una posible asociación positiva (coeficiente 1.49037), aunque no es estadísticamente significativa al 95% (p-valor 0.10608). Esta variable podría tener cierta influencia en la probabilidad de enfermedades cardíacas, aunque se requiere precaución al interpretar su efecto debido a su p-value relativamente alto.
-+ **caa (Número de grandes vasos)** : Muestra una posible relación negativa (-1.05345), aunque no es estadísticamente significativa al 95% (p-valor 0.07702). Su efecto en la predicción de enfermedades cardíacas parece sugerir una disminución en la probabilidad, pero se necesitarían más datos para confirmar su influencia.
-+ **oldpeak (Depresión inducida por el ejercicio)** : En este modelo, la variable "oldpeak" no muestra una asociación significativa (coeficiente 0.03849, p-valor 0.92685) con la presencia de enfermedades cardíacas. Según este análisis, la depresión del segmento ST inducida por el ejercicio no parece influir en la probabilidad de ocurrencia de enfermedades cardíacas.
-
-En resumen, las variables "cp" (Tipo de dolor torácico) y "thall" (Tasa de mortalidad) parecen ser las más influyentes para predecir la ocurrencia de enfermedades cardíacas en este modelo. Otras variables como "slp", "caa", "thalachh" y "exng" muestran asociaciones que podrían ser relevantes a diferentes niveles de confianza o podrían necesitar más datos para una conclusión más sólida.
-
-El AIC del modelo es 58.647, lo que sugiere que este modelo podría mejorar con ajustes adicionales o la inclusión de más variables predictoras. La deviance residual es significativamente menor que la deviance nula, indicando que las variables incluidas en el modelo explican parte de la variabilidad en la presencia de enfermedades cardíacas.
 
 
+El modelo de regresión logística fue construido para predecir la probabilidad de ocurrencia de enfermedades cardíacas (output) en función de varias variables predictoras (age, sex, cp, trtbps, chol, fbs, restecg, thalachh, exng, oldpeak, slp, caa, thall).
 
-<h2 style="background-color: #0E4D83; color: white;">6.Resolución del problema</h2>
++ **age (Edad)**: No se encuentra una relación significativa (coeficiente 0.028971, p-valor 0.913314) entre la edad y la probabilidad de enfermedades cardíacas en este modelo.
++ **sex (Género)**: Existe una relación significativa y negativa (coeficiente -0.844252, p-valor 0.001316) entre el género y la probabilidad de enfermedades cardíacas. Las mujeres tienden a tener una menor probabilidad de padecer enfermedades cardíacas en comparación con los hombres.
++ **cp (Tipo de dolor torácico)**: Se encuentra una relación positiva y significativa (coeficiente 0.784661, p-valor 0.000587). Mayores niveles de este tipo de dolor se asocian con un aumento en la probabilidad de enfermedades cardíacas.
++ **trtbps (Presión arterial en reposo), chol (Colesterol en suero), fbs (Azúcar en sangre en ayunas), restecg (Resultados electrocardiográficos en reposo) y thalachh (Frecuencia cardíaca máxima alcanzada)**: No se encuentran asociaciones significativas con la probabilidad de enfermedades cardíacas en este modelo.
++ **exng (Angina inducida por el ejercicio) y slp (Pendiente del segmento ST máximo del ejercicio)**: Aunque no son estadísticamente significativas al 95%, exng muestra una relación negativa y slp indica una posible asociación positiva con la probabilidad de enfermedades cardíacas.
++ **oldpeak (Depresión del ST inducida por el ejercicio)**: Existe una relación negativa significativa (coeficiente -0.726294, p-valor 0.016401). Mayor depresión del ST se asocia con una disminución en la probabilidad de enfermedades cardíacas.
+caa (Número de vasos sanguíneos principales) y thall (Resultado de prueba de esfuerzo cardíaco): Muestran asociaciones significativas con la probabilidad de enfermedades cardíacas. Caa tiene una relación negativa y thall tiene una relación negativa con la probabilidad de enfermedades cardíacas.
 
-Los hallazgos de este análisis proporcionan claridad sobre las variables más relevantes para predecir la ocurrencia de enfermedades cardíacas.
+En resumen, las variables más influyentes para predecir la ocurrencia de enfermedades cardíacas en este modelo son "cp" (Tipo de dolor torácico), "sex" (Género), "caa" (Número de vasos sanguíneos principales) y "thall" (Resultado de prueba de esfuerzo cardíaco). 
+
+El AIC del modelo es 176.91, lo que sugiere que este modelo podría mejorar con ajustes adicionales o la inclusión de más variables predictoras. Además, la deviance residual es significativamente menor que la deviance nula, indicando que el modelo con las variables predictoras explica parte de la variabilidad en la variable de salida (enfermedades cardíacas).
 
 
-El tipo de dolor torácico (cp) y la tasa de mortalidad (thall) emergen como indicadores significativos de enfermedades cardíacas, mostrando asociaciones claras con la presencia de esta condición en el análisis de regresión logística. Además, la frecuencia cardíaca máxima alcanzada (thalachh) y el número de grandes vasos (caa) también muestran vínculos potenciales, aunque su confirmación estadística podría requerir más datos.
 
-La angina inducida por el ejercicio (exng) y la pendiente del segmento ST máximo del ejercicio (slp) no presentan asociaciones estadísticamente significativas con la presencia de enfermedades cardíacas según este análisis.
 
-La depresión inducida por el ejercicio (oldpeak), aunque no muestra asociación significativa, no parece influir en la probabilidad de ocurrencia de enfermedades cardíacas en este modelo.
+<h2 style="background-color: #0E4D83; color: white;">Resolución del problema</h2>
 
-Estos resultados subrayan la importancia del dolor torácico y la tasa de mortalidad como predictores potenciales de enfermedades cardíacas. Sin embargo, se destaca la necesidad de mayor validación para algunas variables y la posibilidad de ajustes adicionales en el modelo, ya que algunos factores podrían tener influencias más sutiles o necesitar mayor evidencia para confirmar su contribución a la predicción de esta condición médica.
+La creación y evaluación del modelo de clasificación muestran una precisión del 84.33%, lo que indica una capacidad razonablemente buena para predecir la ocurrencia de enfermedades cardíacas en función de las variables utilizadas. Este nivel de precisión es prometedor y señala la relevancia de las características como predictores de la enfermedad.
+
+Entre estas variables, "cp" (Tipo de dolor torácico), "sex" (Género), "caa" (Número de vasos sanguíneos principales) y "thall" (Resultado de prueba de esfuerzo cardíaco) destacan como las más influyentes para identificar la presencia de enfermedades cardíacas en este contexto.
+
+No obstante, es vital destacar que la evaluación de más métricas de rendimiento, como la sensibilidad y la especificidad, podría proporcionar una imagen más completa de la eficacia del modelo, especialmente en un contexto médico específico. Además, considerar la inclusión de más variables o refinamientos para mejorar el modelo es clave, ya que el AIC sugiere que aún hay espacio para ajustes adicionales.
+
+En cuanto a responder al problema, estos resultados proporcionan una comprensión inicial de qué variables pueden estar relacionadas con las enfermedades cardíacas, pero hay áreas que podrían necesitar más investigación o ajustes adicionales en el modelo. Se pueden formular hipótesis preliminares sobre las variables más influyentes, pero para una respuesta más completa al problema, se requeriría un análisis más detallado y quizás la inclusión de más variables predictoras o datos adicionales.
