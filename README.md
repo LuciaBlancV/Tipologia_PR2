@@ -63,6 +63,15 @@ A continuación se describe brevemente cada una de las columnas del dataset:
 
 
 
+## Contribuciones 
+| Investigación previa        | Lucia Blanc Velázquez y Sergi Sánchez Romero          | 
+| Redacción de las respuestas |Lucia Blanc Velázquez y Sergi Sánchez Romero    | 
+| Desarrollo del código        |Lucia Blanc Velázquez y Sergi Sánchez Romero             | 
+| Participación en el vídeo |Lucia Blanc Velázquez y Sergi Sánchez Romero       |
+
+
+
+
 ## Recursos:
 
 + *Calvo M., Subirats L., Pérez D. (2019)*. **Introducción a la limpieza y análisis de los datos**. Editorial UOC. 
