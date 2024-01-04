@@ -1,15 +1,16 @@
 ---
-title: 'Tipologia de Datos: PRA2 - Limpieza de Datos'
-author: "Autor: Sergi Sánchez Romero y Lucia Blanc Velázquez"
-date: "Diciembre 2023"
+title: "Autor: Sergi Sánchez Romero y Lucia Blanc Velázquez"
+author: "Diciembre 2023"
+date: ""
 output:
   html_document: 
-    logo: PR2_logo.png
     highlight: default
     number_sections: yes
     theme: cosmo
     toc: yes
     toc_depth: 2
+    includes:
+      in_header: PEC-header.html
   pdf_document: 
     highlight: zenburn
     toc: yes
@@ -17,22 +18,18 @@ output:
   word_document: default
 ---
 
-![](/Users/luciablanc/Downloads/PR2_logo.png){ style="display: block; margin-left: auto; margin-right: auto;" }
-
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ******
-# Introducción
+<h2 style="background-color: #0E4D83; color: white;">1. Introducción</h2> 
 ******
 
-## Presentación
+
+<h3 style="background-color: #2677AF; color: white;">1.1. Presentación</h3>
+
 En esta práctica se elabora un caso práctico orientado a aprender a identificar los datos relevantes para un proyecto analítico y usar las herramientas de integración, limpieza, validación y análisis de los mismos.
 
 
-## Objetivos
+<h3 style="background-color: #2677AF; color: white;">1.2. Objetivos</h3>
+
 ● Aprender a aplicar los conocimientos adquiridos y su capacidad de resolución de problemas en entornos nuevos o poco conocidos dentro de contextos más amplios o multidisciplinares.
 
 ● Saber identificar los datos relevantes y los tratamientos necesarios (integración, limpieza y validación) para llevar a cabo un proyecto analítico.
@@ -53,13 +50,17 @@ En esta práctica se elabora un caso práctico orientado a aprender a identifica
 
 
 ******
-# Descripción del dataset: "Heart Attack Analysis & Prediction dataset"
+<h2 style="background-color: #0E4D83; color: white;">2. Descripción del dataset: "Heart Attack Analysis & Prediction dataset"</h2> 
 ******
-El conjunto de datos escogido para esta práctica, se titula: “Heart Attack Analysis & Prediction dataset”, el cual tiene como objetivo detectar aquellos factores que pueden actuar como potenciales precursores de las enfermedades cardiovasculares, y así ayudar a la detección y gestión temprana mediante la creación de un modelo. En el conjunto de datos se contemplan un total de 14 características importantes que pueden ayudar a la predicción de desarrollar o no una enfermedad cardíaca. Según la información encontrada, se sabe que las enfermedades cardiovasculares ocupan un porcentaje del 31% en relación a las muertes que se producen en el mundo cada año, por lo que supone una de las causas principales de muerte. Es importane tener en cuenta cuales son los atributos que pueden conllevar a un mayor riesgo cardiovascular o al desarrollo de enfermedad cardiovascular, por lo que, el objetivo es predecir que variables influyen más en este desarrollo.
+El conjunto de datos escogido para esta práctica, se titula: “Heart Attack Analysis & Prediction dataset”, el cual tiene como objetivo detectar aquellos factores que pueden actuar como potenciales precursores de las enfermedades cardiovasculares, y así ayudar a la detección y gestión temprana mediante la creación de un modelo. 
+En el conjunto de datos se contemplan un total de 14 características importantes, tanto numéricas como categóricas que pueden ayudar a la predicción de desarrollar o no una enfermedad cardíaca. Según la información encontrada, se sabe que las enfermedades cardiovasculares ocupan un porcentaje del 31% en relación a las muertes que se producen en el mundo cada año, por lo que supone una de las causas principales de muerte. La variable 'output', consiste en valores de 0 o 1 que indican si una persona tiene más probabilidad de sufrir un infarto (1) o menor probabilidad (0).
+Es importane tener en cuenta cuales son los atributos que pueden conllevar a un mayor riesgo cardiovascular o al desarrollo de enfermedad cardiovascular, por lo que, el objetivo es predecir que variables influyen más en este desarrollo.
 
 
 
-A continuación, realizamos la descripción de las variables que hay en el dataset "Heart Attack Analysis & Prediction dataset", usando la información encontrada en la web [Kaggle datasets] (https://www.kaggle.com/datasets), concretamente en el siguiente enlace: https://www.kaggle.com/datasets/rashikrahmanpritom/heart-attack-analysis-predictiondataset 
+A continuación, realizamos la descripción de las variables que hay en el dataset "Heart Attack Analysis & Prediction dataset", usando la información encontrada en la web [Kaggle datasets] (https://www.kaggle.com/datasets), concretamente en el siguiente enlace: https://www.kaggle.com/datasets/rashikrahmanpritom/heart-attack-analysis-prediction-dataset 
+
+** Características de las variales incluidas:**
 
 + **age**: Edad del paciente
 
@@ -67,13 +68,13 @@ A continuación, realizamos la descripción de las variables que hay en el datas
 
 + **cp** : Tipo dolor torácico
 
-++ **Value 1** : Angina típica (TA)
+  -  **Value 1** : Angina típica (TA)
 
-++ **Value 2** : Angina atípica (ATA)
+  - **Value 2** : Angina atípica (ATA)
 
-++ **Value 3** : Dolor no-anginal (NAP)
+  - **Value 3** : Dolor no-anginal (NAP)
 
-++ **Value 4** : Asintomático (ASY)
+  - **Value 4** : Asintomático (ASY)
 
 + **trtbps** : Presión arterial en reposo (in mm Hg)
 
@@ -83,21 +84,21 @@ A continuación, realizamos la descripción de las variables que hay en el datas
 
 + **restecg** : Resultados del electrocardiograma en reposo 
 
-++ **Value 0** : Normal
+  - **Value 0** : Normal
 
-++ **Value 1** : Presentar anomalías de la onda ST-T (inversión de la onda T y/o elevación o depresión del ST de > 0,05 mV)
+  - **Value 1** : Presentar anomalías de la onda ST-T (inversión de la onda T y/o elevación o depresión del ST de > 0,05 mV)
 
-++ **Value 2** : Hipertrofia ventricular izquierda probable o definida según los criterios de Estes
+  - **Value 2** : Hipertrofia ventricular izquierda probable o definida según los criterios de Estes
 
 + **thalachh** : Frecuencia cardiaca máxima alcanzada 
 
-+ **exng** : Angina inducida por el ejercicio (1 = si; 0 = no)
++ **exng** : Angina inducida por esfuerzo (1 = yes; 0 = no)
 
 + **oldpeak** : Pico previo
 
 + **slp** : Pendiente del segmento ST máximo del ejercicio
 
-+ **caa** : Número de grandes buques (0-3)
++ **caa** : Número de buques principales (0-3)
 
 + **thall** : Tasa de mortalidad
 
@@ -105,15 +106,16 @@ A continuación, realizamos la descripción de las variables que hay en el datas
 
 
 
+\newpage
 
 ******
-# Integración y selección de los datos de interés a analizar. 
+<h2 style="background-color: #0E4D83; color: white;">3. Integración y selección de los datos de interés a analizar</h2> 
 ******
 Puede ser el resultado de adicionar diferentes datasets o una subselección útil de los datos originales, en base al objetivo que se quiera conseguir.
 
 
 Primero de todo, cargamos las librerías que vamos a usar durante la práctica
-```{r}
+```{r message= FALSE, warning=FALSE}
 
 if (!require('dplyr')) install.packages('dplyr');library(dplyr)
 if (!require('ggplot2')) install.packages('ggplot2');library(ggplot2)
@@ -126,531 +128,338 @@ if (!require('Matrix')) install.packages('matrix');library(Matrix)
 if (!require('patchwork')) install.packages('patchwork');library(patchwork)
 if (!require('ggcorrplot')) install.packages('ggcorrplot');library(ggcorrplot)
 if (!require('corrplot')) install.packages('ggcorrplot');library(corrplot)
+if (!require('DataExplorer'))install.packages('DataExplorer');library(DataExplorer)
+if (!require('psych'))install.packages('psych');library(psych)
+if (!require('highcharter'))install.packages('highcharter');library(highcharter)
+if (!require('tidyverse'))install.packages('tidyverse');library(tidyverse)
+if (!require('GGally'))install.packages('GGally');library(GGally)
+if (!require('htmltools'))install.packages('htmltools');library(htmltools)
+
+# setwd
+dir <- dirname(rstudioapi::getSourceEditorContext()$path)
+setwd(dir)
 ```
 
 
-
+<h3 style="background-color: #2677AF; color: white;">Carga del dataset</h3>
 Cargamos los datos de la base de datos "heart" y tipificamos las variables que tiene el conjunto de datos como corresponde
 ```{r}
 library(readxl)
-heart <- read_excel("~/Documents/AAESTUDIOS/UOC_Máster_Data_Science/4t_Semestre/Tipologia_Ciclodevida_datos/PR2/heart.xlsx")
+heart <- read_excel("heart.xlsx")
 
 
 # Mostramos los primeros registros del conjunto de dtos, con el fin de ver una aproximación de como es el conjunto y su estructura
 head(heart, max(10))
 str(heart)
+```
+El conjunto de datos consiste en 14 variables numéricas (columnas continuas).
 
-# Definimos las variables como numéricas o categóricas
+
+
+
+******
+<h2 style="background-color: #0E4D83; color: white;">4.Limpieza de los datos</h2>
+******
+
+<h3 style="background-color: #2677AF; color: white;">Classificación de variables</h3>
+```{r}
+library(dplyr)
+# Clasificamos las variables en numéricas o en categóricas
 # Numéricas
-heart$age<-as.numeric(heart$age)
-heart$trtbps<-as.numeric(heart$trtbps)
-heart$chol<-as.numeric(heart$chol)
-heart$thalachh<-as.numeric(heart$thalachh)
-heart$oldpeak<-as.numeric(heart$oldpeak)
-heart$caa<-as.numeric(heart$caa)
-
+heart <- heart%>%
+  mutate_at(vars(age,trtbps,chol, thalachh, oldpeak), as.numeric)
 
 # Categóricas
-heart$sex<-as.factor(heart$sex)
-heart$cp<-as.factor(heart$cp)
-heart$fbs<-as.factor(heart$fbs)
-heart$restecg<-as.factor(heart$restecg)
-heart$exng<-as.factor(heart$exng)
-heart$slp<-as.factor(heart$slp)
-heart$thall<-as.factor(heart$thall)
+heart <- heart%>%
+  mutate_at(vars(sex, cp, fbs, restecg, exng, slp, thall, caa, output), as.character)
+
 
 # Observamos las dimensiones del dataset "heart"
 heart.cols<-dim(heart)[2]
 heart.rows<-dim(heart)[1]
+
+# Obtenemos un primer vistazo estadístico de cada atirbuto
+describeBy(heart)
 ```
-Podemos ver como el conjunto de datos heart tiene 14 atributos y 303 observaciones
 
 
+<h3 style="background-color: #2677AF; color: white;">Dimensión del conjunto de datos</h3>
 
-#### Seleccionamos datos dentro del conjunto que son de nuestro interés
+Con la librería DataExplorer vemos una vista general del conjunto de datos de análisis una vez seleccionados, basandonos en los valores faltantes, columnas discretas y continuas.
 ```{r}
-# Creamos una nueva variable 'age_group' basada en la categoria de edad correspondiente
-heart$age_group <- cut(heart$age, breaks = c(0, 30, 60, max(heart$age)), labels = c("Joven", "Adulto", "Mayor"))
-
-# Ahora 'age_group' contiene categorías de edad en lugar de valores continuos
-str(heart)
-
-# Ahora el conjunto de datos heart tiene 15 atributos y 303 observaciones
-
-
-# Seleccionamos sólo los pacientes con presión arterial alta, ya que tienen un mayor riesgo
-heart <- heart[heart$trtbps > 140, ]
-
-str(heart)
+library(DataExplorer)
+plot_intro(heart, title = "Información Dataset")
+introduce(heart)
 ```
-Finalmente, después de la selección de datos, obtenemos el conjunto de datos heart con el que trabajaremos, el cual contiene un total de 15 atributos y 65 observaciones.
+Según la tabla y el barplot creado, podemos ver como el conjunto de datos heart tiene 14 atributos y 303 observaciones, el cual contiene un total de 9 columnas discretas y 5 columnas continuas.
+Observamos como no hay valores faltantes.
 
 
 
-Ahora vamos a visualizar la información básica del conjunto de datos
+Ahora vamos a visualizar la información básica del conjunto de datos en función de la variable 'output' de interés
 ```{r}
 # La variable output nos va indicar quien tiene o no una mayor probabilidad de sufrir un ataque al corazón, por lo que primero calculamos el porcentaje de pacientes que tienen mayor probabilidad y luego el resto
 
 print("Porcentaje de personas con probabilidad de infarto")
 round((sum(heart$output == 1)/nrow(heart)) * 100, 2)
 
-# Vemos que el porcentaje de personas con probabilidad de infarto es del 41,53%
-
 
 print("Porcentaje de personas sin probabilidad de infarto")
 round((sum(heart$output == 0)/nrow(heart))*100,2)
-# Vemos que el porcentaje de personas sin probabilidad de infarto es del 58,46%
 ```
 
 
 
-A continuación estudiamos la estadística básica de las variables del conjunto, cargando el sumario de todos los atributos
+<h3 style="background-color: #2677AF; color: white;">Arreglamos el conjunto de datos</h3>
+
+
+Primero de todo, hacemos una matriz de correlaciones de todo el conjunto
+<h4 style="background-color: #2677AF; color: white;">Matriz de Correlaciones</h4>
 ```{r}
-summary(heart)
+# Convirtimos todas las variables a numéricas (asegúrate de que las variables sean numéricas)
+heart_numeric <- sapply(heart, as.numeric)
 
-library(ggplot2)
+ # Calculamos la matriz de correlación
+correlation_tab <- cor(heart_numeric)
 
-# Edad (age)
-summary(heart$age)
-g1<-ggplot(data=heart, aes(x=age))+
-  geom_density(color="darkblue", fill="blue") + 
-  labs(title = "Edad de los pacientes", x="Edad", y= "Densidad")
-g1
+library(RColorBrewer)
 
-# Sexo (sex)
-summary(heart$sex)
-g2<-ggplot(data=heart, aes(x=sex))+
- geom_bar(mapping = aes(x=sex, fill=sex)) + 
-  labs(title = "Sexo de los pacientes", x="Sexo", y= "Recuento") 
-g2
+# Definimos una nueva paleta de colores
+new_col <- colorRampPalette(c("#0000CD", "#7D26CD", "#FFFFFF","#FF6347","#FF0000"))
+
+# Creamos la matriz de correlación con corrplot y personalización adicional
+corrplot(correlation_tab, 
+         method = "color", 
+         tl.col = "black", 
+         tl.srt = 45, 
+         tl.cex = 0.8, 
+         cl.cex = 0.8, 
+         col = new_col(200), 
+         addCoef.col = "black", 
+         order = "AOE", 
+         number.cex = 0.8,
+         title = "Matriz de Correlación") 
+```
+
+
+
+
+<h4 style="background-color: #2677AF; color: white;">Valores Duplicados</h4>
+```{r}
+# Valores duplicados
+get_duplicates <- function(heart){
+    total_rows = dim(heart)[1]
+    unique_rows = dim(heart %>% group_by_all %>% count)[1]
+    n_duplicates = (total_rows - unique_rows)
+    cat('n duplicates -> ', n_duplicates)
+}
+
+get_duplicates(heart) # Vemos que hay un valor duplicado
+
+heart = unique(heart)
+
+
+cat('Eliminamos la fila duplicada')
+
+get_duplicates(heart)
+```
+Ya no tenemos valores duplicados en el conjunto de datos
+
+
+
+
+
+
+
+
+
+
+<h3 style="background-color: #2677AF; color: white;">Análisis Univariado</h3>
+
+
+<h4 style="background-color: #2677AF; color: white;">Variables Categóricas</h4>
+
+Primero discretizaremos las variables categóricas, asignando a cada valor la correspondiente definición de la variable
+```{r}
+# Hacemos cópia del conjunto para usarlo solamente en este análisis:
+heart_discr<-heart
+
+# Sexo del paciente (sex)
+heart_discr$sex <- ifelse(heart_discr$sex == 0, "Mujer", "Hombre")
 
 # Dolor Torácico (cp)
-summary(heart$cp)
-g3<-ggplot(data=heart, aes(x=cp))+
-  geom_bar(aes(fill=cp)) + 
-  facet_grid(~sex) +
-  labs(title = "Distribución del Dolor Torácico", x="Dolor Torácico", y= "Recuento") 
-g3
+heart_discr$cp <- factor(heart_discr$cp, levels = c(1, 2, 3, 4), labels = c("Angina Típica", "Angina Atípica", "No Anginal", "Asintomático"))
 
+# Resultados del Electrocardiograma en Reposo (restecg)
+heart_discr$restecg <- factor(heart_discr$restecg, levels = c(0, 1, 2), labels = c("Normal", "Anomalías ST-T", "Hipertrofia ventricular"))
 
-# Presión Arterial en Reposo (trtbps)
-summary(heart$trtbps)
-g4<-ggplot(data=heart, aes(x=trtbps))+
-  geom_histogram(color="darkblue", fill="green") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución de la Presión Arterial en Reposo", x="Presión Arterial en Reposo (mm Hg)", y= "Recuento") 
-g4
+# Angina Inducida por Esfuerzo (exng)
+heart_discr$exng <- ifelse(heart_discr$exng == 1, "Si", "No")
 
+# Número de Buques Principales (caa) (0-3)
+heart_discr$caa <- as.character(heart_discr$caa)
 
-# Colesterol Sérico (chol)
-summary(heart$chol)
-g5<-ggplot(data=heart, aes(x=chol))+
-  geom_histogram(color="darkblue", fill="yellow") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución del Colesterol Sérico", x="Colesterol Sérico (mm/dl)", y= "Recuento")
-g5
+# Glucemia en Ayunas (fbs)
+heart_discr$fbs <- ifelse(heart_discr$fbs == 1, "Verdadero", "Falso")
 
-
-# Glucemia en ayunas (fbs)
-summary(heart$fbs)
-g6<-ggplot(data=heart, aes(x=fbs))+
-  geom_bar(fill="maroon4") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución Glucemia en ayunas > 120", x="Glucemia en Ayunas", y= "Recuento") 
-g6
-
-
-# Electrocardiograma en Reposo (restecg)
-summary(heart$restecg)
-g7<-ggplot(data=heart, aes(x=restecg))+
-  geom_bar(aes(fill=restecg)) + 
-  facet_grid(~sex) +
-  labs(title = "Distribución ECG en Reposo", x="ECG en Reposo", y= "Recuento") 
-g7
-
-
-# Frecuencia Cardíaca Máxima (thalachh)
-summary(heart$thalachh)
-g8<-ggplot(data=heart, aes(x=thalachh))+
-  geom_density(color="darkblue", fill="brown") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución Frecuencia Cardíaca Máxima alcanzada", x="Frecuencia Cardíaca Máxima", y= "Densidad")
-g8
-
-
-# Angina de Esfuerzo (exng)
-summary(heart$exng)
-g9<-ggplot(data=heart, aes(x=exng))+
- geom_bar(aes(fill=exng)) + 
-  facet_grid(~sex) +
-  labs(title = "Distribución Anginas Inducidas por Esfuerzo", x="Angina Inducida por Esfuerzo", y= "Recuento") 
-g9
-
-
-# Antiguo pico (oldpeak)
-summary(heart$oldpeak)
-g10<-ggplot(data=heart, aes(x=oldpeak))+
-  geom_histogram(color="black", fill="turquoise") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución Valor Medido en Depresión", x="Valor", y= "Recuento")
-g10
-
-
-# Pendiente del Segmento ST máximo (slp)
-summary(heart$slp)
-g11<-ggplot(data=heart, aes(x=slp))+
-  geom_bar(aes(fill=slp))+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución Pendiente ST", x="Pendiente ST", y= "Recuento") 
-g11
-
-
-# Número de grandes buques (caa)
-summary(heart$caa)
-g12<-ggplot(data=heart, aes(x=caa))+
-  geom_bar(fill="forestgreen")+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución del Número de Buques", x="Nº de buques", y= "Recuento") 
-g12
-
-
+# Pendiente del Segmento ST Máximo del Ejercicio (slp)
+heart_discr$slp <- factor(heart_discr$slp, levels = c(0, 1, 2), labels = c("Tipo 0", "Tipo 1", "Tipo 2"))
 
 # Tasa de Mortalidad (thall)
-summary(heart$thall)
-g13<-ggplot(data=heart, aes(x=thall))+
-  geom_bar(aes(fill=thall))+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución de la Tasa de Mortalidad", x="Tasa de mortalidad", y= "Recuento") 
-g13
+heart_discr$thall <- factor(heart_discr$thall, levels = c(0, 1, 2, 3), labels = c("Thal0", "Thal1", "Thal2", "Thal3"))
 
-
-# Probabilidad Infarto (output)
-summary(heart$output)
-g14<-ggplot(data=heart, aes(x=output))+
-  geom_bar(fill="purple")+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución Cardiopatía (Y/N)", x="Cardiopatía", y= "Recuento") 
-g14
-
-# Grupo de edad (age_group)
-summary(heart$age_group)
-g15<-ggplot(data=heart, aes(x=age_group))+
-  geom_bar(aes(fill=age_group))+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución de los grupos de edad", x="Grupo de edad", y= "Recuento") 
-g15
-
-
-# Visualizamos los resultados en una matriz de correlaciones, incluyendo todas las variables numéricas
-library(ggcorrplot)
-df2 <- heart[c(14, 1,4,5, 8, 10, 12)]
-corr <- cor(round(df2, 2))
-corr_chart<-ggcorrplot(corr ,hc.order=TRUE,lab=FALSE)
-corr_chart
+# Ouput/Target (0= menor probabilidad de infarto 1= mayor probabilidad de infarto)
+heart_discr$output <- factor(heart_discr$output, levels = c(0, 1), labels = c("Menor probabilidad", "Mayor probabilidad"))
 ```
 
 
 
-
-******
-# Limpieza de los datos
-******
-
-## ¿Los datos contienen ceros o elementos vacíos? Gestiona cada uno de estos casos
+A continuación estudiamos la estadística básica de las variables categóricas del conjunto heart
 ```{r}
-# Hacemos cópia de los datos antes de iniciar la limpieza
-heart_ld<-heart
-
-# Primero determinamos el número de valores vacíos o valores en blanco
-colSums(is.na(heart_ld))
-colSums(heart_ld=="")
-# Vemos como no hay ningun valor nulo en el conjunto de datos
+library(dplyr)
+library(ggplot2)
 
 
+par(mfrow = c(2, 2))
 
-# Estudiamos si hay valores que estén duplicados
-sum(duplicated(heart_ld)) # Hay una fila que está repetida
+categorical_var <- list("sex", "cp", "fbs", "restecg", "exng", "slp", "caa", "thall")
 
-# Buscamos cual es la fila repetida
-duplicated_rows <- duplicated(heart_ld)
-duplicate_row <- heart_ld[duplicated_rows, ]
+for (i in categorical_var) {
+  plot_data <- as.data.frame(table(heart_discr[[i]], heart_discr$output))
+  colnames(plot_data) <- c(i, "output", "Freq")
+  
+  plot <- ggplot(plot_data, aes_string(x = i, y = "Freq", fill = "output")) +
+    geom_bar(stat = "identity", position = position_dodge()) +
+    scale_fill_manual(values = c("#BA55D3", "#6699CC"), 
+                      name = "Probabilidad de Infarto", 
+                      labels = c('0-Menor', '1-Mayor')) +
+    labs(x = i, y = "Número de Observaciones") +
+    theme_minimal() +  # Cambio de tema a minimal
+    theme(panel.background = element_rect(fill = "white"),  # Fondo blanco
+          axis.line = element_line(color = "black"))  # Líneas de ejes negras
+  
+  print(plot)
+}
 
-heart_ld <- unique(heart_ld)  # Eliminamos la fila duplicada
+```
 
-sum(duplicated(heart_ld)) # Comprobamos como ahora no hay ninguna fila duplicada
+**Observaciones**
+
+Según el thall, el riesgo de infarto se alcanza en las personas con frecuencia cardíaca máxima(clase 2).
+En la característica sexo, la clase 1 tiene más posibilidades de sufrir un infarto que la clase 0.
+Las probabilidades de sufrir un infarto son mayores en la clase 0 de sexo.
+Comparando con el análisis de correlación, la característica fbs muestra la menor correlación con la salida.
+En caa, las personas con clase, son más propensas a sufrir un ataque al corazón que las personas con clase 4, 3 y 2.
+Según la característica cp, las personas con dolor no anginoso tienen más probabilidades de sufrir un infarto que las personas con dolor anginoso atípico y típico.
+En exng, las personas con clase 1 tienen altas probabilidades de riesgo de infarto, mientras que las personas con clase 0 son menos propensas al infarto.
+La característica Slp muestra que la clase 0 tiene menos correlación con el resultado que las clases 1 y 2.
+
+
+
+
+
+
+
+
+
+<h4 style="background-color: #2677AF; color: white;">Variables Numéricas</h4>
+A continuación estudiamos la estadística básica de las variables numéricas del conjunto
+```{r}
+# Creamos un gráfico de pares con las variables numéricas del conjunto de datos "heart"
+# Establecer opciones para el tamaño del gráfico
+options(repr.plot.width = 20, repr.plot.height = 20)  
+
+# Creamos un gráfico de pares con las variables numéricas del conjunto de datos "heart"
+pair_plot <- ggpairs(heart, columns = c("age", "trtbps", "chol", "thalachh", "oldpeak"),
+                     aes(color = as.factor(output), alpha = 0.5),
+                     lower = list(continuous = "smooth"),
+                     palette = c('blue', 'red')) +  # Usamos la misma paleta de colores
+  theme_bw() +
+  theme(text = element_text(size = 8),
+        panel.grid = element_blank(),
+        legend.position = "right",
+        legend.title = element_text(face = "bold")) +
+  ggtitle("Variables Numéricas") +
+  labs(color = "Output", alpha = "Transparencia")
+pair_plot
+# Convertimos el gráfico a un gráfico interactivo con plotly
+interactive_plot <- ggplotly(pair_plot)
+
+# Mostramos el gráfico interactivo
+interactive_plot
+
 ```
 
 
 
 
-## Identifica y gestiona los valores extremos
+
+<h3 style="background-color: #2677AF; color: white;">Valores Outliers</h3>
 
 Seguidamente es importante estudiar la posibilidad de valores outliers para las variables numéricas de la base de datos
 ```{r}
-# Para ello, creamos una función para que la podamos aplicar en cada uno de los atributos, de la cual obtengamos un gráfico Boxplot y una representación de puntos en forma de vector para poder visualizar mejor la posibilidad de valores outliers.
+# Cargamos librerías necesarias
+library(ggplot2)
 
-analisis_outliers <- function(variable, name){
+# Reorganizamos el dataframe para plotear las variables seleccionadas
+selected_vars <- heart[, c("age", "oldpeak", "chol", "thalachh", "trtbps")]
+selected_vars <- stack(selected_vars)
 
-# Creamos el gráfico
-fig <- plot_ly(type = 'box')
+# Agregamos la columna 'output' al dataframe para usarla en el color de los puntos
+selected_vars$output <- heart$output
 
-# Representamos la variable
-fig <- fig %>% add_boxplot(y = variable,
-                           jitter = 0.3, 
-                           pointpos = -1.8, 
-                           boxpoints = 'all',
-                           marker = list(color = 'rgb(47,79,79)'),
-                           line = list(color = 'rgb(220,20,60)'),
-                           fillcolor= list(color='rgb(220,20,60)'),
-                           name = name)
+# Creamos un gráfico de cajas con puntos superpuestos para las variables numéricas seleccionadas
+ggplot(selected_vars, aes(x = ind, y = values, color = as.factor(output))) +
+  geom_boxplot(alpha = 0.7, outlier.size = 2) +  
+  geom_jitter(alpha = 0.3, size = 0.5) +  
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
+  labs(x = "Variables", y = "Valores") +
+  scale_color_brewer(palette = "Set1", name = "Probabilidad de Infarto", labels = c('0 - Menor Probabilidad', '1 - Mayor Probabilidad')) + 
+  ggtitle("Gráfico de Cajas con Puntos - Variables Numéricas y Outliers")
 
-fig <- fig %>% layout(title = paste("Análisis de valores Outliers de la variable", name))
 
-# Obtenemos los posibles outliers
-outliers <- boxplot.stats(variable)$out
+```
+**Observaciones**
+Podemos ver como hay puntos muy alejados de las medias y de los boxplots creados en las variables chol, thalachh y trtbps, por lo que, vamos a estudiar si mediante una función creada según las desviaciones estandard, se eliminan estos valores y dejamos el conjunto de datos sin potenciales valores outliers.
 
-return(list(outliers=outliers, fig=fig))
+
+<h3 style="background-color: #2677AF; color: white;">Limpieza de outliers </h3>
+Para limpiar los outliers usamos un enfoque de desviaciones estándar (SD), el cual usa la distribución normal de los datos.
+```{r}
+# Creamos un dataframe de las variables de las cuales hemos de quitar outliers, excluyendo age y oldpeak
+df_outliers<-as.data.frame(heart %>%
+                  select("trtbps","thalachh","chol"))
+
+# Función para quitar outliers
+remove_outliers_sd <- function(df_outliers, threshold = 5) {
+  # Loop a través de cada columna numérica del dataframe
+  for (col in names(df_outliers)) {
+    if(is.numeric(df_outliers[[col]])) {
+      col_mean <- mean(df_outliers[[col]], na.rm = TRUE)
+      col_sd <- sd(df_outliers[[col]], na.rm = TRUE)
+      df_outliers <- df_outliers[abs((df_outliers[[col]] - col_mean) / col_sd) <= threshold, ]
+    }
+  }
+  df_outliers
 }
 
 
+heart_clean <-remove_outliers_sd(heart,c("trtbps" ,"thalachh", "chol"))
 
-# Age
-# Obtenemos la lista resultante de la función de análisis de outliers.
-analisis = analisis_outliers(heart_ld$age,"Age")
-
-# Representamos los datos con un gráfico BoxPlot
-analisis$fig 
-# No hay valores outliers
-
-
-
-# Resting Blood Pressure (trtbps)
-analisis = analisis_outliers(heart_ld$trtbps,"Resting Blood Pressure")
-analisis$fig 
-# Tampoco encontramos valores outliers, ya que, al filtrar con valores > 140, entendemos que todos los valores son posibles
-
-
-
-# Cholesterol (chol)
-analisis = analisis_outliers(heart_ld$chol,"Cholesterol")
-analisis$fig
-# Vemos que la distribución está centrada entre 126 y 400, por lo que no hay ningún punto outlier.
-
-
-
-# Maximum Heart Rate (thalachh)
-analisis = analisis_outliers(heart_ld$thalachh,"Maximum Heart Rate")
-analisis$fig 
-# No se observan valores outliers
-
-
-
-# Oldpeak (oldpeak)
-analisis = analisis_outliers(heart_ld$oldpeak,"Oldpeak")
-analisis$fig 
-# Hay puntos que podrían ser valores outliers
-
-# Visualizamos los valores candidatos a outliers
-analisis$outliers
-
-# Vemos como es posible que se den estos valores, por lo que no hacemos ninguna acción en la variable
+# Observamos el cambio de las dimensiones
+dim(heart_clean)
 ```
+Los valores potenciales outliers no han sido eliminados debido que pueden ser posibles valores de las variables, con lo que, tenemos el conjunto de datos limpio y nos hemos asegurado de que no hay ningún valor que se aleje de la realidad. 
 
 
-
-### Resultado limpieza de datos
-```{r}
-# Mostramos el resumen de los datos después de haber limpiado todo el conjunto
-str(heart_ld)
-
-summary(heart_ld)
-
-#Volvemos a visualizar los datos en conjunto como al inicio, pero con los datos limpios
-
-# Edad (age)
-summary(heart_ld$age)
-g1<-ggplot(data=heart_ld, aes(x=age))+
-  geom_density(color="darkblue", fill="blue") + 
-  labs(title = "Edad de los pacientes", x="Edad", y= "Densidad")
-g1
-
-# Sexo (sex)
-summary(heart_ld$sex)
-g2<-ggplot(data=heart_ld, aes(x=sex))+
- geom_bar(mapping = aes(x=sex, fill=sex)) + 
-  labs(title = "Sexo de los pacientes", x="Sexo", y= "Recuento") 
-g2
-
-# Dolor Torácico (cp)
-summary(heart_ld$cp)
-g3<-ggplot(data=heart_ld, aes(x=cp))+
-  geom_bar(aes(fill=cp)) + 
-  facet_grid(~sex) +
-  labs(title = "Distribución del Dolor Torácico", x="Dolor Torácico", y= "Recuento") + theme_classic()
-g3
-
-# Presión Arterial en Reposo (trtbps)
-summary(heart_ld$trtbps)
-g4<-ggplot(data=heart_ld, aes(x=trtbps))+
-  geom_histogram(color="darkblue", fill="green") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución de la Presión Arterial en Reposo", x="Presión Arterial en Reposo (mm Hg)", y= "Recuento") 
-g4
-
-# Colesterol Sérico (chol)
-summary(heart_ld$chol)
-g5<-ggplot(data=heart_ld, aes(x=chol))+
-  geom_histogram(color="darkblue", fill="yellow") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución del Colesterol Sérico", x="Colesterol Sérico (mm/dl)", y= "Recuento")
-g5
-
-# Glucemia en ayunas (fbs)
-summary(heart_ld$fbs)
-g6<-ggplot(data=heart_ld, aes(x=fbs))+
-  geom_bar(fill="maroon4") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución Glucemia en ayunas > 120", x="Glucemia en Ayunas", y= "Recuento") 
-g6
-
-
-# Electrocardiograma en Reposo (restecg)
-summary(heart_ld$restecg)
-g7<-ggplot(data=heart_ld, aes(x=restecg))+
-  geom_bar(aes(fill=restecg)) + 
-  facet_grid(~sex) +
-  labs(title = "Distribución ECG en Reposo", x="ECG en Reposo", y= "Recuento") 
-g7
-
-# Frecuencia Cardíaca Máxima (thalachh)
-summary(heart_ld$thalachh)
-g8<-ggplot(data=heart_ld, aes(x=thalachh))+
-  geom_density(color="darkblue", fill="brown") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución Frecuencia Cardíaca Máxima alcanzada", x="Frecuencia Cardíaca Máxima", y= "Densidad")
-g8
-
-# Angina de Esfuerzo (exng)
-summary(heart_ld$exng)
-g9<-ggplot(data=heart_ld, aes(x=exng))+
- geom_bar(aes(fill=exng)) + 
-  facet_grid(~sex) +
-  labs(title = "Distribución Anginas Inducidas por Esfuerzo", x="Angina Inducida por Esfuerzo", y= "Recuento") 
-g9
-
-# Antiguo pico (oldpeak)
-summary(heart_ld$oldpeak)
-g10<-ggplot(data=heart_ld, aes(x=oldpeak))+
-  geom_histogram(color="black", fill="turquoise") + 
-  facet_grid(~sex) +
-  labs(title = "Distribución Valor Medido en Depresión", x="Valor", y= "Recuento")
-g10
-
-# Pendiente del Segmento ST máximo (slp)
-summary(heart_ld$slp)
-g11<-ggplot(data=heart_ld, aes(x=slp))+
-  geom_bar(aes(fill=slp))+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución Pendiente ST", x="Pendiente ST", y= "Recuento") 
-g11
-
-
-# Número de grandes buques (caa)
-summary(heart_ld$caa)
-g12<-ggplot(data=heart_ld, aes(x=caa))+
-  geom_bar(fill="forestgreen")+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución del Número de Buques", x="Nº de buques", y= "Recuento") 
-g12
-
-
-# Tasa de Mortalidad (thall)
-summary(heart_ld$thall)
-g13<-ggplot(data=heart_ld, aes(x=thall))+
-  geom_bar(aes(fill=thall))+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución de la Tasa de Mortalidad", x="Tasa de mortalidad", y= "Recuento") 
-g13
-
-
-# Variable Cardiopatía (output)
-summary(heart_ld$output)
-g14<-ggplot(data=heart_ld, aes(x=output))+
-  geom_bar(fill="purple")+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución Cardiopatía (Y/N)", x="Cardiopatía", y= "Recuento") 
-g14
-
-
-# Grupo de edad (age_group)
-summary(heart_ld$age_group)
-g15<-ggplot(data=heart_ld, aes(x=age_group))+
-  geom_bar(aes(fill=age_group))+ 
-  facet_grid(~sex) +
-  labs(title = "Distribución de los grupos de edad", x="Grupo de edad", y= "Recuento") 
-g15
-
-
-# Visualizamos los resultados en una matriz de correlaciones, incluyendo todas las variables
-library(ggcorrplot)
-df2 <- heart_ld[c(14, 1,4,5, 8, 10, 12)]
-corr <- cor(round(df2, 2))
-corr_chart<-ggcorrplot(corr ,hc.order=TRUE,lab=FALSE)
-corr_chart
-```
-
-
-
-
-## Discretización de los datos 
-```{r}
-# De la misma manera que en la limpieza de los datos, creamos una cópia para trabajar la discretización de las variables
-heart_discr<-heart_ld
-
-
-# A continuación iniciamos el proceso de discretización de las variables para poder realizar correctamente los análisis posteriormente 
-
-# Age
-heart_discr["age"] <- cut(heart_discr$age, breaks=c(-Inf, 40,65,+Inf),
-                      labels=c("Adulto","Mediana edad","Tercera edad"))
-# Comprobamos como quedan los datos
-summary(heart_discr$age)
-
-
-# Resting Blood Pressure
-heart_discr["trtbps"] <- cut(heart_discr$trtbps, breaks=c(-Inf, 120, 140,+Inf),
-                      labels=c("Normal","Alta","Muy Alta"))
-# Comprobamos como quedan los datos
-summary(heart_discr$trtbps)
-
-
-# Cholesterol
-heart_discr["chol"] <- cut(heart_discr$chol, breaks=c(-Inf, 200, 240,+Inf),
-                      labels=c("Normal","Alto","Muy Alto"))
-# Comprobamos como quedan los datos
-summary(heart_discr$chol)
-
-
-# Maximum Rate Freq
-heart_discr["thalachh"] <- cut(heart_discr$thalachh, breaks=c(-Inf, 120, 160,+Inf),
-                      labels=c("Normal","Alto","Muy Alto"))
-# Comprobamos como quedan los datos
-summary(heart_discr$thalachh)
-
-
-# Oldpeak
-heart_discr["oldpeak"] <- cut(heart_discr$oldpeak, breaks=c(-Inf, 2, 2.55, +Inf),
-                      labels=c("Normal","Alto","Muy Alto"))
-# Comprobamos como quedan los datos
-summary(heart_discr$oldpeak)
-```
 
 
 
 
 
 ******
-# Análisis de los datos
+<h2 style="background-color: #0E4D83; color: white;">5. Análisis de los datos</h2>
 ******
 
 
@@ -682,13 +491,14 @@ Para evaluar la normalidad de las variables seleccionadas, empleamos la prueba d
 
 # Usamos la prueba de Shapiro-Wilk para verificar la normalidad de cada variable numérica
 variables <- c("age", "trtbps", "chol", "thalachh", "oldpeak")
-resultados_shapiro <- lapply(heart_ld[variables], shapiro.test)
+resultados_shapiro <- lapply(heart_clean[variables], shapiro.test)
 names(resultados_shapiro) <- variables
 
 # Verificar la estructura de las variables seleccionadas en el conjunto de datos 'heart'
-str(heart_ld[, variables])
+str(heart_clean[, variables])
 # Mostramos los resultados
 print(resultados_shapiro)
+
 ```
 Los resultados de la normalidad muestran que para la variable 'age' (edad) hay evidencia suficiente para rechazar la hipótesis nula y afirmar que los datos no siguen una distribución normal, igual que la variable 'trtbps' (presión arterial en reposo) y la variable 'oldpeak', donde la evidencia para rechazar la hipótesis de normalidad es más fuerte. 
 
@@ -699,27 +509,13 @@ Por otro lado, ni la variable 'chol' (colesterol) ni la variable 'thalachh' (rit
 Calculamos las varianzas de las variables numéricas agrupadas por categorías de edad. 
 Esto nos va a proporcionar una visión de como varían  'age', 'trtbps', 'chol', 'thalachh', y 'oldpeak'  en distintos grupos de edad en el riesgo de sufrir un ataque cardíaco.
 ```{r}
-# A continuación comprobamos la varianza, en función del grupo de edad al que pertenece
 
-# Calculamos las varianzas de las variables numéricas por grupos de edad
-varianzas_por_edad <- aggregate(cbind(age, trtbps, chol, thalachh, oldpeak) ~ age_group, data = heart_ld, FUN = var)
-print(varianzas_por_edad)
 ```
 
 
 Clasificamos la varible 'output' en dos categorías ('Yes' y 'No) para investigar las varianzas de las variables numéricas respecto a la probabilidad de sufrir un ataque cardíaco
 ```{r}
-# Calculamos las varianzas de las variables numéricas según si tiene riesgo de ataque al corazón o no
 
-# Antes de nada clasificamos la variable 'output' en dos categorías ("Yes" y "No")
-heart_var<-heart_ld
-heart_var$output <- factor(heart_var$output, levels = c(0, 1), labels = c("No", "Yes"))
-# Comprobamos como quedan los datos
-summary(heart_var$output)
-
-
-varianzas_por_output <- aggregate(cbind(age, trtbps, chol, thalachh, oldpeak) ~ output, data = heart_var, FUN = var)
-print(varianzas_por_output)
 ```
 Los resultados resaltan las diferencias en las varianzas de estas variables entre aquellos casos con mayor probabilidad de sufrir un ataque cardíaco y los que no.
 
@@ -731,106 +527,12 @@ Esta evaluación proporciona una visión detallada de cómo las variables numér
 
 ## Aplicación de pruebas estadísticas para comparar los grupos de datos
 
-### Matriz Correlaciones
-Mediante la creación de una matriz de correlaciones, procederemos a estudiar la relación que hay entre cada uno de los atributos del conjunto de datos, mediante los datos limpios sin la discretización (heart_ld) y convertimos aquellas variables categóricas en númericas
-```{r}
-# Creamos una cópia de los datos limpios sin discretizar para convertirlos todos en numéricos, y teniendo en cuenta la información aportada en la descripción de las variables
-heart_cor <-heart_ld
-
-
-# sex
-heart_cor$sex <- as.numeric(as.character(heart_cor$sex))
-
-# cp
-heart_cor$cp <- as.numeric(as.character(heart_cor$cp))
-
-# fbs
-heart_cor$fbs <- as.numeric(as.character(heart_cor$fbs))
-
-# restecg
-heart_cor$restecg <- as.numeric(as.character(heart_cor$restecg))
-
-# exng
-heart_cor$exng <- as.numeric(as.character(heart_cor$exng))
-
-# slp
-heart_cor$slp <- as.numeric(as.character(heart_cor$slp))
-
-# thall
-heart_cor$thall <- as.numeric(as.character(heart_cor$thall))
-
-# output
-heart_cor$output <- as.numeric(as.character(heart_cor$output))
-
-
-# Imprimimos la estructura de este nuevo dataset para ver como han sido transformadas las variables
-str(heart_cor)
-# Vemos que ahora todos los atributos son numéricos, por lo que podemos crear la matriz de correlaciones.
-
-
-# Hacemos el cálculo de la matriz
-# Primero quitamos la variable del grupo de edad
-heart_cor <- heart_cor[, -15] 
-corr <- round(cor(heart_cor), 1)
-
-
-# Realizamos la representación gráfic con los resultados
-col <- colorRampPalette(c("#0000CD", "#7D26CD", "#FFFFFF",
-                          "#FF6347","#FF0000"))
-
-corrplot(corr, method = "square", shade.col = NA, tl.col = "black",
-         tl.srt = 45, col = col(200), addCoef.col = "black", order = "AOE", 
-         type = "upper", diag = F, addshade = "all")
-```
-Viendo la matriz de correlaciones, podemos confirmar que existe una clara relación entre algunas de las variables incluidas en el conjunto de datos y el hecho de padecer un infarto cardiovascular. De la misma manera, vemos cuales son las diferentes relaciones entre las variables y la manera en que podemos reducir el riesgo de padecder un infarto, hecho que podemos estudiar con un análisis comparativo con ANOVA y usando un modelo predictivo a continuación. 
-
-
-```{r}
-# Mostramos la matriz de correlaciones que nos indica las relaciones entre las diferentes variables.
-round(cor(heart_cor),2)
-```
-Nos fijamos en la variable que realmente nos interesa para saber que factores ayudan a predecir que se de un ataque al corazón, que es el output. Esta variable presenta una mayor correlación con 'cp' (tipo de dolor torácico), 'thalachh' (frecuencia cardíaca máxima alcanzada), 'thall' (tasa de mortalidad), 'exng' (angina inducida por el ejercicio), 'slp' (pendiente del segmento ST máximo del ejercicio) y 'caa' (número de grandes buques). Por tanto, estas serán las variables que analizaremos.
-
-
 
 ### Analísis comparativo (ANOVA)
 
 Para realizar un análisis comparativo de todas las variables numéricas y la variable output, empleamos la prueba estadística de ANOVA, prueba que evalúa si hay diferencias significativas en la media de la variable de salida entre los distintos niveles de las variables numéricas.
-```{r}
-# ANOVA entre la variable de salida (output) y las variables numéricas
-anova_output_age <- aov(output ~ age, data = heart_cor)
-anova_output_trtbps <- aov(output ~ trtbps, data = heart_cor)
-anova_output_chol <- aov(output ~ chol, data = heart_cor)
-anova_output_thalachh <- aov(output ~ thalachh, data = heart_cor)
-anova_output_oldpeak <- aov(output ~ oldpeak, data = heart_cor)
-anova_output_caa <- aov(output ~ caa, data = heart_cor)
-
-anova_output_sex <- aov(output ~ sex, data = heart_cor)
-anova_output_cp <- aov(output ~ cp, data = heart_cor)
-anova_output_fbs <- aov(output ~ fbs, data = heart_cor)
-anova_output_restecg <- aov(output ~ restecg, data = heart_cor)
-anova_output_exng <- aov(output ~ exng, data = heart_cor)
-anova_output_slp <- aov(output ~ slp, data = heart_cor)
-anova_output_thall <- aov(output ~ thall, data = heart_cor)
 
 
-# Resumen de los resultados del ANOVA
-summary(anova_output_age)
-summary(anova_output_trtbps)
-summary(anova_output_chol)
-summary(anova_output_thalachh)
-summary(anova_output_oldpeak)
-summary(anova_output_caa)
-
-summary(anova_output_sex)
-summary(anova_output_cp)
-summary(anova_output_fbs)
-summary(anova_output_restecg)
-summary(anova_output_exng)
-summary(anova_output_slp)
-summary(anova_output_thall)
-
-```
 
 Parece que la frecuencia cardíaca máxima alcanzada (thalachh), el número de grandes vasos (caa), el tipo de dolor de pecho (cp), la presencia de angina inducida por el ejercicio (exng) y, en menor medida, el tipo de pendiente del segmento ST del electrocardiograma en reposo (slp), la tasa de mortalidad (thall) y la depresión inducida por el ejercicio (oldpeak), muestran asociaciones significativas con la presencia de enfermedades cardíacas. Estos hallazgos, indicados por los valores de p altamente significativos , podrían sugerir la importancia de estas variables en la predicción o diagnóstico de enfermedades cardíacas en el conjunto de datos analizado.
 
@@ -843,13 +545,7 @@ Estos resultados proporcionan una visión inicial sobre qué variables podrían 
 ### Modelado Predictivo (Regresión logística)
 Para construir un modelo predictivo usando regresión logística con las variables seleccionadas del ANOVA anterior, usamos la función glm().
 ```{r}
-# Ajustamos un modelo de regresión logística para predecir enfermedades cardíacas
-model <- glm(output ~ caa + cp + thalachh + oldpeak + thall + exng + slp , data = heart_cor, family = "binomial")
-summary(model)
 
-# Predicciones usando el modelo
-predictions <- predict(model, type = "response")
-predictions
 ```
 El modelo de regresión logística tiene como objetivo predecir la probabilidad de ocurrencia de enfermedades cardíacas (output) a partir de un conjunto de variables predictoras (cp, thalachh, thall, oldpeak, exng, slp y caa).
 
@@ -867,7 +563,7 @@ El AIC del modelo es 58.647, lo que sugiere que este modelo podría mejorar con 
 
 
 
-# Resolución del problema
+<h2 style="background-color: #0E4D83; color: white;">6.Resolución del problema</h2>
 
 Los hallazgos de este análisis proporcionan claridad sobre las variables más relevantes para predecir la ocurrencia de enfermedades cardíacas.
 
