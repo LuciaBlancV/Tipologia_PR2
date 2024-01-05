@@ -58,8 +58,8 @@ A continuación se describe brevemente cada una de las columnas del dataset:
 | **heart_PR2.Rmd**      | El documento contiene toda la información referente al código en lenguaje de programación R empleado para ejecutar en análisis de datos de la presente práctica. | 
 | **heart_PR2.html**    | Contiene toda la información generada en el codigo en lenguaje de programación R, en un formato de tipo .html, de tal forma que facilite la visualización de la información.      | 
 | **heart_PR2.pdf**    | Contiene toda la información generada en el codigo en lenguaje de programación R, en un formato de tipo .pdf, de tal forma que facilite la visualización de la información.      | 
-| **heart.xlsx** | Archivo de tipo .xlsx que contiene toda la información original relacionada en la base de datos.      | 
-| **heart_clean.xlsx** | Archivo de tipo .xlsx que contiene información ya habiendo aplicado metodos de limpieza de datos.      | 
+| **heart.csv** | Archivo de tipo CSV que contiene toda la información original relacionada en la base de datos.      | 
+| **heart_clean.csv** | Archivo de tipo CSV que contiene información ya habiendo aplicado métodos de limpieza de datos.      | 
 
 
 
