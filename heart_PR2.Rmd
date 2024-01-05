@@ -1,5 +1,5 @@
 ---
-title: "Autor: Sergi Sánchez Romero y Lucia Blanc Velázquez"
+title: "Sergi Sánchez Romero y Lucia Blanc Velázquez"
 author: "Diciembre 2023"
 date: ""
 output:
@@ -8,7 +8,7 @@ output:
     number_sections: yes
     theme: cosmo
     toc: yes
-    toc_depth: 2
+    toc_depth: 3
     includes:
       in_header: PEC-header.html
   pdf_document: 
@@ -18,17 +18,74 @@ output:
   word_document: default
 ---
 
-******
-<h2 style="background-color: #0E4D83; color: white;">1. Introducción</h2> 
-******
+<h1 style="background-color: white; color: #0E4D83; padding: 1px; padding-left: 5px; font-weight: bold; width: 100px;">ÍNDICE</h1>
+
+<div style="font-size: 12px; line-height:1.1">
+
+1. [Introducción](#1-introduccion)
+
+   1.1 [Presentación](#1-1-presentacion)
+   
+   1.2 [Objetivos](#1-2-objetivos)
+   
+2. [Descripción del conjunto de datos](#2-descripcion-del-conjunto-de-datos)
+
+3. [Integración y selección de los datos de interés a analizar](#3-integracion-y-seleccion-de-los-datos)
+
+   3.1 [Carga de Librerías](#3-1-carga-de-librerias)
+   
+   3.2 [Carga del dataset](#3-2carga-del-dataset)
+   
+   3.3 [Observación del dataset](#3-3-observacion-del-dataset)
+   
+4. [Limpieza de los datos](#4-limpieza-de-los-datos)
+
+   4.1 [Valores nulos y/o vacíos](#4-1-valores-nulos-y-o-vacios)
+   
+   4.2 [Valores Duplicados](#4-2-valores-duplicados)
+   
+   4.3 [Valores Extremos](#4-3-valores-extremos)
+   
+   4.4 [Comprobación de la normalidad y homogeneidad de la varianza](#4-4-comprobacion-de-la-normalidad-y-homogeneidad-de-la-varianza)
+   
+      4.4.1 [Comprobación de la normalidad](#4-4-1-comprobacion-de-la-normalidad)
+      
+      4.4.2 [Comprobación de la varianza](#4-4-2-comprobacion-de-la-varianza)
+      
+5. [Análisis de Datos](#5-analisis-de-datos)
+
+   5.1 [Análisis Univariante](#5-1-analisis-univariante)
+   
+   5.2 [Análisis Bivariante](#5-2-analisis-bivariante)
+   
+      5.2.1 [Variables Categóricas](#5-2-1-variables-categoricas)
+      
+      5.2.2 [Variables Numéricas](#5-2-2-variables-numericas)
+      
+   5.3 [Análisis Multivariado](#5-3-analisis-multivariado)
+   
+      5.3.1 [Modelo No Supervisado: Clustering](#5-3-1-modelo-no-supervisado-clustering)
+      
+      5.3.2 [Modelo Supervisado: Regresión Logística](#5-3-2-modelo-supervisado-regresion-logistica)
+      
+      5.3.3 [Random Forest](#5-3-3-random-forest)
+      
+6. [Resolución del problema](#6-resolucion-del-problema)
+
+</div>
+
+\newpage
+
+<h2 style="background-color: #0E4D83; color: white; padding: 1px; padding-left: 5px; font-weight: bold;" id="id_1-introduccion">1 Introducción</h2> 
 
 
-<h3 style="background-color: #2677AF; color: white;">1.1. Presentación</h3>
+
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_1-1-presentacion">1.1 Presentación</h3>
 
 En esta práctica se elabora un caso práctico orientado a aprender a identificar los datos relevantes para un proyecto analítico y usar las herramientas de integración, limpieza, validación y análisis de los mismos.
 
 
-<h3 style="background-color: #2677AF; color: white;">1.2. Objetivos</h3>
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_1-2-objetivos">1.2 Objetivos</h3>
 
 ● Aprender a aplicar los conocimientos adquiridos y su capacidad de resolución de problemas en entornos nuevos o poco conocidos dentro de contextos más amplios o multidisciplinares.
 
@@ -44,23 +101,19 @@ En esta práctica se elabora un caso práctico orientado a aprender a identifica
 
 ● Desarrollar la capacidad de búsqueda, gestión y uso de información y recursos en el ámbito de la ciencia de datos.
 
+\newpage
 
+<h2 style="background-color: #0E4D83; color: white; padding: 1px; padding-left: 5px; font-weight: bold;" id="id_2-descripcion-del-conjunto-de-datos">2 Descripción del conjunto de datos</h2> 
 
+El conjunto de datos escogido para esta práctica, se titula: **“Heart Attack Analysis & Prediction dataset”**, el cual tiene como objetivo detectar aquellos factores que pueden actuar como potenciales precursores de las enfermedades cardiovasculares, y así ayudar a la detección y gestión temprana mediante la creación de un modelo. 
 
-
-
-******
-<h2 style="background-color: #0E4D83; color: white;">2. Descripción del dataset: "Heart Attack Analysis & Prediction dataset"</h2> 
-******
-El conjunto de datos escogido para esta práctica, se titula: “Heart Attack Analysis & Prediction dataset”, el cual tiene como objetivo detectar aquellos factores que pueden actuar como potenciales precursores de las enfermedades cardiovasculares, y así ayudar a la detección y gestión temprana mediante la creación de un modelo. 
 En el conjunto de datos se contemplan un total de 14 características importantes, tanto numéricas como categóricas que pueden ayudar a la predicción de desarrollar o no una enfermedad cardíaca. Según la información encontrada, se sabe que las enfermedades cardiovasculares ocupan un porcentaje del 31% en relación a las muertes que se producen en el mundo cada año, por lo que supone una de las causas principales de muerte. La variable 'output', consiste en valores de 0 o 1 que indican si una persona tiene más probabilidad de sufrir un infarto (1) o menor probabilidad (0).
-Es importane tener en cuenta cuales son los atributos que pueden conllevar a un mayor riesgo cardiovascular o al desarrollo de enfermedad cardiovascular, por lo que, el objetivo es predecir que variables influyen más en este desarrollo.
 
-
+Es importante tener en cuenta cuales son los atributos que pueden conllevar a un mayor riesgo cardiovascular o al desarrollo de enfermedad cardiovascular, por lo que, el objetivo es predecir que variables influyen más en este desarrollo.
 
 A continuación, realizamos la descripción de las variables que hay en el dataset "Heart Attack Analysis & Prediction dataset", usando la información encontrada en la web [Kaggle datasets] (https://www.kaggle.com/datasets), concretamente en el siguiente enlace: https://www.kaggle.com/datasets/rashikrahmanpritom/heart-attack-analysis-prediction-dataset 
 
-** Características de las variales incluidas:**
+** Características de las variables incluidas:**
 
 + **age**: Edad del paciente
 
@@ -98,60 +151,60 @@ A continuación, realizamos la descripción de las variables que hay en el datas
 
 + **slp** : Pendiente del segmento ST máximo del ejercicio
 
-+ **caa** : Número de buques principales (0-3)
++ **caa** : Número de buques principales (0-4)
 
 + **thall** : Tasa de mortalidad
 
 + **output** : 0= menor probabilidad de infarto 1= mayor probabilidad de infarto 
 
 
+**Nota:** Aunque en Kaggle la descripción del dataset habla de la variable **ca** como el número de vasos principales (0-3) coloreados por fluoroscopia vemos como en el fichero csv la columna se llama **caa** y los valores que existen van de 0 a 4. Este detalle también parece que esta mal de donde probablemente se han extraído los datos (https://archive.ics.uci.edu/dataset/45/heart+disease). Seguiremos llamando a nuestra variable caa pero contemplando el valor 4.
 
 \newpage
 
-******
-<h2 style="background-color: #0E4D83; color: white;">3. Integración y selección de los datos de interés a analizar</h2> 
-******
+
+<h2 style="background-color: #0E4D83; color: white; padding: 1px; padding-left: 5px; font-weight: bold;" id="id_3-integracion-y-seleccion-de-los-datos">3 Integración y selección de los datos de interés a analizar</h2> 
+
 Puede ser el resultado de adicionar diferentes datasets o una subselección útil de los datos originales, en base al objetivo que se quiera conseguir.
 
-<h3 style="background-color: #0E4D83; color: white;">3.1. Carga de Librerías</h3> 
-Primero de todo, cargamos las librerías que vamos a usar durante la práctica
-```{r message= FALSE, warning=FALSE}
-if (!require('csv')) install.packages('csv');library(csv)
-if (!require('dplyr')) install.packages('dplyr');library(dplyr)
-if (!require('ggplot2')) install.packages('ggplot2');library(ggplot2)
-if (!require('reshape')) install.packages('reshape');library(reshape)
-if (!require('plotly')) install.packages('plotly');library(plotly)
-if (!require('plyr')) install.packages('plyr');library(plyr)
-if (!require('Stat2Data')) install.packages('Stat2Data');library(Stat2Data)
-if (!require('corrplot')) install.packages('corrplot');library(corrplot)
-if (!require('Matrix')) install.packages('matrix');library(Matrix)
-if (!require('patchwork')) install.packages('patchwork');library(patchwork)
-if (!require('ggcorrplot')) install.packages('ggcorrplot');library(ggcorrplot)
-if (!require('corrplot')) install.packages('ggcorrplot');library(corrplot)
-if (!require('DataExplorer'))install.packages('DataExplorer');library(DataExplorer)
-if (!require('psych'))install.packages('psych');library(psych)
-if (!require('highcharter'))install.packages('highcharter');library(highcharter)
-if (!require('tidyverse'))install.packages('tidyverse');library(tidyverse)
-if (!require('GGally'))install.packages('GGally');library(GGally)
-if (!require('htmltools'))install.packages('htmltools');library(htmltools)
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_3-1-carga-de-librerias">3.1 Carga de Librerías</h3> 
+Primero de todo, cargamos las librerías que vamos a usar durante la práctica.
 
-# setwd
+<p>&nbsp;</p>
+
+
+```{r message= FALSE, warning=FALSE}
+# Lista de paquetes
+packages <- c('csv', 'dplyr', 'ggplot2', 'reshape', 'plotly', 'plyr', 'Stat2Data',
+              'Matrix', 'patchwork', 'ggcorrplot', 'corrplot', 'DataExplorer', 'psych',
+              'highcharter', 'tidyverse', 'GGally', 'htmltools', 'RColorBrewer',
+              'dendextend', 'cluster', 'factoextra', 'caTools', 'gridExtra', 'car', 
+              'randomForest')
+
+# Instalar y cargar paquetes
+for (package in packages) {
+  if (!require(package, character.only = TRUE)) {
+    install.packages(package)
+    library(package, character.only = TRUE)
+  }
+}
+# Set working directory
 dir <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(dir)
 ```
 
 
-<h3 style="background-color: #2677AF; color: white;">3.2. Carga del dataset</h3>
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_3-2-carga-del-dataset">3.2 Carga del dataset</h3>
 Cargamos los datos de la base de datos "heart" y tipificamos las variables que tiene el conjunto de datos como corresponde
 ```{r}
-library(csv)
 heart <- read.csv("heart.csv", header=T,sep=",")
 ```
 
 
-<h3 style="background-color: #2677AF; color: white;">3.3. Observación del dataset</h3>
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_3-3-observacion-del-dataset">3.3 Observación del dataset</h3>
+
+Mostramos los primeros registros del conjunto de datos, con el fin de ver una aproximación de cómo es el conjunto y su estructura.
 ```{r}
-# Mostramos los primeros registros del conjunto de dtos, con el fin de ver una aproximación de como es el conjunto y su estructura
 head(heart, max(10))
 str(heart)
 
@@ -165,21 +218,24 @@ mensaje <- paste("El conjunto tiene", num_filas, "filas y", num_columnas, "colum
 print(mensaje)
 
 
-# Obtenemos un primer vistazo estadístico de cada atirbuto
+```
+
+Obtenemos un primer vistazo estadístico de cada atributo.
+
+```{r warning=FALSE}
 describeBy(heart)
 ```
 
-<h2 style="background-color: #0E4D83; color: white;">4.Limpieza de los datos</h2>
-Primero de todo, hacemos una matriz de correlaciones de todo el conjunto, para ver como son los datos
-```{r}
-library(corrplot)
-# Convirtimos todas las variables a numéricas (asegúrate de que las variables sean numéricas)
+\newpage
+
+<h2 style="background-color: #0E4D83; color: white; padding: 1px; padding-left: 5px; font-weight: bold;" id="id_4-limpieza-de-los-datos">4 Limpieza de los datos</h2>
+Primero de todo, hacemos una matriz de correlaciones de todo el conjunto, para ver la relación lineal entre variables y comprender como se relacionan entre sí.
+```{r fig.align='center', fig.width=10, fig.height=10}
+# Convertimos todas las variables a numéricas
 heart_numeric <- sapply(heart, as.numeric)
 
  # Calculamos la matriz de correlación
 correlation_tab <- cor(heart_numeric)
-
-library(RColorBrewer)
 
 # Definimos una nueva paleta de colores
 new_col <- colorRampPalette(c("#0000CD", "#7D26CD", "#FFFFFF","#FF6347","#FF0000"))
@@ -189,29 +245,31 @@ corrplot(correlation_tab,
          method = "color", 
          tl.col = "black", 
          tl.srt = 30, 
-         tl.cex = 0.6, 
-         cl.cex = 0.6, 
+         tl.cex = 0.8, 
+         cl.cex = 0.8, 
          col = new_col(200), 
          addCoef.col = "black", 
          order = "AOE", 
-         number.cex = 0.6)
+         number.cex = 0.8)
 
 
 ```
-**Observaciones**
+
+
+**Observaciones de la matriz de correlación**
+
 Según la matriz de correlaciones inicial, presentada anteriormente, donde las correlaciones positivas se muestran en color rojo y las negativas en color azul fuerte podemos ver cuales son las variables con mayores intensidad de color, guiando así la significación de los coeficientes de correlación. 
 
-- La variable de interés (output) se relaciona positivamente con slp, thalachh y cp, y negativamente con caa, oldpeal, exng y thall.
-- No existe ningún tipo de relación entre la variable output y la variable chol ni la variable fbs.
-- Hay una fuerte correlación negativa entre slp y oldpeak (-0.58), y una correlación positiva entre slp y thalachh. 
-- Las variables cp y exng estan correlacionadas negativamente, igual que la edad (age) y la variable thalachh.
+- La variable de interés **output** se **relaciona positivamente** con **slp**, **thalachh** y **cp**, y **negativamente** con **caa**, **oldpeal**, **exng** y **thall**.
+- **No existe ningún tipo de relación entre la variable output y la variable chol ni la variable fbs**.
+- Hay una **correlación moderada negativa entre slp y oldpeak** (-0.58), y una **correlación moderada positiva entre slp y thalachh**. 
+- Las variables **cp y exng estan correlacionadas negativamente, igual que la edad (age) y la variable thalachh**.
 
 
 
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_4-1-valores-nulos-y-o-vacios">4.1 Valores nulos y/o vacíos</h3>
 
-<h3 style="background-color: #2677AF; color: white;">4.1 Valores nulos y/o vacíos</h3>
-
-Debido que algunas de las variables del conjunto de datos tienen tipos de datos incorrectos, debemos transformar los tipos de datos antes del análisis
+Debido que algunas de las variables del conjunto de datos tienen tipos de datos incorrectos, debemos transformar los tipos de datos antes del análisis.
 ```{r}
 # Clasificamos las variables en numéricas o en categóricas
 # Numéricas
@@ -228,28 +286,40 @@ Según la tabla y el barplot creado, podemos ver como el conjunto de datos heart
 
 
 Con la librería DataExplorer vemos una vista general del conjunto de datos de análisis una vez seleccionados, basandonos en los valores faltantes, columnas discretas y continuas.
-```{r}
+```{r fig.align='center'}
 plot_intro(heart, title = "Información Dataset")
 ```
-Tal y como vemos en el barplot creado, podemos ver la distirbución del conjunto como en la tabla anterior y también observamos como no hay valores faltantes.
+
+Tal y como vemos en el barplot creado, podemos ver la distirbución del conjunto como en la tabla anterior y también observamos como **no hay valores faltantes**.
 
 
+Ahora vamos a visualizar la información básica del conjunto de datos en función de la variable 'output' de interés. La variable output nos va indicar quien tiene o no una mayor probabilidad de sufrir un ataque al corazón, por lo que primero calculamos el porcentaje de pacientes que tienen mayor probabilidad y luego el resto.
 
-Ahora vamos a visualizar la información básica del conjunto de datos en función de la variable 'output' de interés
-```{r}
-# La variable output nos va indicar quien tiene o no una mayor probabilidad de sufrir un ataque al corazón, por lo que primero calculamos el porcentaje de pacientes que tienen mayor probabilidad y luego el resto
+```{r fig.align='center'}
+# Calcula los porcentajes
+porcentaje_infarto <- round((sum(heart$output == 1)/nrow(heart)) * 100, 2)
+porcentaje_sin_infarto <- round((sum(heart$output == 0)/nrow(heart))*100, 2)
 
-print("Porcentaje de personas con probabilidad de infarto")
-round((sum(heart$output == 1)/nrow(heart)) * 100, 2)
+# Crea un dataframe para usar en ggplot
+df_porcentajes <- data.frame(
+  Categoria = c("Con Probabilidad de Infarto", "Sin Probabilidad de Infarto"),
+  Porcentaje = c(porcentaje_infarto, porcentaje_sin_infarto)
+)
 
-
-print("Porcentaje de personas sin probabilidad de infarto")
-round((sum(heart$output == 0)/nrow(heart))*100,2)
+# Crea el gráfico de barras con porcentajes
+ggplot(df_porcentajes, aes(x = Categoria, y = Porcentaje, fill = Categoria)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste(Porcentaje, "%")), vjust = -0.5) +  # Agrega etiquetas de porcentaje
+  labs(title = "Porcentaje de Personas con/sin Probabilidad de Infarto") +
+  theme_minimal()
 ```
 
+Observamos que es un **conjunto de datos relativamente equilibrado**.
 
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_4-2-valores-duplicados">4.2 Valores Duplicados</h4>
 
-<h4 style="background-color: #2677AF; color: white;">4.2. Valores Duplicados</h4>
+Vamos a comprobar si existen valores duplicados en nuestro conjunto de datos y si existen los eliminaremos.
+
 ```{r}
 # Valores duplicados
 get_duplicates <- function(heart){
@@ -268,47 +338,70 @@ cat('Eliminamos la fila duplicada')
 
 get_duplicates(heart)
 ```
-Ya no tenemos valores duplicados en el conjunto de datos
+
+Ya no tenemos valores duplicados en el conjunto de datos. Vamos a estudiar ahora los valores extremos (*outliers*) y cómo afectan a nuestro conjunto de datos.
 
 
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_4-3-valores-extremos">4.3 Valores Extremos</h3>
 
-
-<h3 style="background-color: #2677AF; color: white;">4.3. Valores Extremos</h3>
-
-Seguidamente es importante estudiar la posibilidad de valores outliers para las variables numéricas de la base de datos
+Seguidamente es importante estudiar la posibilidad de valores outliers para las variables numéricas del conjunto de datos.
 ```{r}
-# Cargamos librerías necesarias
-library(ggplot2)
+generate_boxplot <- function(data, title) {
+  # Gráfico 1
+  selected_vars1 <- data[, c("age", "oldpeak")]
+  selected_vars1 <- stack(selected_vars1)
+  selected_vars1$output <- data$output
 
-# Reorganizamos el dataframe para plotear las variables seleccionadas
-selected_vars <- heart[, c("age", "oldpeak", "chol", "thalachh", "trtbps")]
-selected_vars <- stack(selected_vars)
+  plot1 <- ggplot(selected_vars1, aes(x = ind, y = values, color = as.factor(output))) +
+    geom_boxplot(alpha = 0.7, outlier.size = 2) +  
+    geom_jitter(alpha = 0.3, size = 0.5) +  
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
+    labs(x = "", y = "") +
+    scale_color_brewer(palette = "Set1", name = "Probabilidad Infarto", labels = c('0 - Menor', '1 - Mayor')) + 
+    ggtitle("") +
+    theme(legend.position = "bottom", 
+          legend.direction = "horizontal",
+          legend.box = "horizontal")
 
-# Agregamos la columna 'output' al dataframe para usarla en el color de los puntos
-selected_vars$output <- heart$output
+  # Gráfico 2
+  selected_vars2 <- data[, c("chol", "thalachh", "trtbps")]
+  selected_vars2 <- stack(selected_vars2)
+  selected_vars2$output <- data$output
 
-# Creamos un gráfico de cajas con puntos superpuestos para las variables numéricas seleccionadas
-ggplot(selected_vars, aes(x = ind, y = values, color = as.factor(output))) +
-  geom_boxplot(alpha = 0.7, outlier.size = 2) +  
-  geom_jitter(alpha = 0.3, size = 0.5) +  
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
-  labs(x = "Variables", y = "Valores") +
-  scale_color_brewer(palette = "Set1", name = "Probabilidad de Infarto", labels = c('0 - Menor Probabilidad', '1 - Mayor Probabilidad')) + 
-  ggtitle("Gráfico de Cajas con Puntos - Variables Numéricas y Outliers")
+  plot2 <- ggplot(selected_vars2, aes(x = ind, y = values, color = as.factor(output))) +
+    geom_boxplot(alpha = 0.7, outlier.size = 2) +  
+    geom_jitter(alpha = 0.3, size = 0.5) +  
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
+    labs(x = "", y = "") +
+    scale_color_brewer(palette = "Set1", name = "Probabilidad Infarto", labels = c('0 - Menor', '1 - Mayor')) + 
+    ggtitle("") +
+    theme(legend.position = "bottom", 
+          legend.direction = "horizontal",
+          legend.box = "horizontal")
 
+  # Organizar gráficos en una cuadrícula
+  grid.arrange(plot1, plot2, ncol = 2, top = title)
+}
 ```
+
+
+```{r fig.align='center', fig.width=10, fig.height=8}
+generate_boxplot(heart, "Diagrama de caja y bigotes - Con Outliers")
+```
+
 **Observaciones**
-Podemos ver como hay puntos muy alejados de las medias y de los boxplots creados en las variables chol, thalachh y trtbps, por lo que, vamos a estudiar si mediante una función creada según las desviaciones estandard, se eliminan estos valores y dejamos el conjunto de datos sin potenciales valores outliers.
+Podemos ver como hay puntos muy alejados de las medias y de los boxplots creados en las variables chol, thalachh , oldpeak y trtbps, por lo que, vamos a estudiar si mediante una función creada según las desviaciones estandard, se eliminan estos valores y dejamos el conjunto de datos sin potenciales valores outliers.
+
+Para limpiar los valores atípicos (outliers) usamos un enfoque del rango intercuartílico (IQR), el cual es una medida de dispersión que se basa en la diferencia entre el tercer (Q3) y primer cuartil (Q1) del conjunto de datos.
 
 
 
-<h3 style="background-color: #2677AF; color: white;">4.4. Limpieza de Valores Extremos </h3>
-Para limpiar los valores atípicos (outliers) usamos un enfoque del rango intercuartílico (IQR), el cual es una medida de dispersión que se bada en la diferencia entre el tercer (Q3) y primer cuartil (Q1) del conjunto de datos
 ```{r}
 # Creamos un dataframe de las variables de las cuales hemos de quitar outliers, excluyendo age y oldpeak
 df_outliers<-as.data.frame(heart %>%
-                  select("trtbps","thalachh","chol"))
+                  select("trtbps","thalachh","chol","oldpeak"))
 
 # Función para quitar outliers
 outliers <- function(x) { 
@@ -336,122 +429,164 @@ remove_outliers <- function(df_outliers, cols = names(df_outliers)) {
 # Una vez creada la función para quitar los outliers, creamos un nuevo conjutno de datos sin los outliers 
 heart_clean<-remove_outliers(heart,c("trtbps","thalachh", "chol"))
 
-
 # Observamos el cambio de las dimensiones
-dim(heart_clean)
+dim_clean<- dim(heart_clean)
 ```
-Los valores potenciales outliers han sido eliminados y ahora tenemos el conjunto de datos con un total de 287 filas y 14 variables. 
 
+
+Los valores potenciales outliers han sido eliminados y ahora tenemos nuestro **conjunto de datos limpio** con un total de **`r dim_clean[1]` filas** y **`r dim_clean[2]` variables**. 
+
+Guardamos nuestro fichero con la limpieza realizada.
+
+```{r}
+write.csv(heart_clean, file = "heart_clean.csv")
+```
 
 **Resultado de Limpieza de Outliers**
-```{r}
-# Reorganizamos el dataframe para plotear las variables seleccionadas
-selected_vars <- heart_clean[, c("age", "oldpeak", "chol", "thalachh", "trtbps")]
-selected_vars <- stack(selected_vars)
 
-# Agregamos la columna 'output' al dataframe para usarla en el color de los puntos
-selected_vars$output <- heart_clean$output
 
-# Creamos un gráfico de cajas con puntos superpuestos para las variables numéricas seleccionadas
-ggplot(selected_vars, aes(x = ind, y = values, color = as.factor(output))) +
-  geom_boxplot(alpha = 0.7, outlier.size = 2) +  
-  geom_jitter(alpha = 0.3, size = 0.5) +  
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
-  labs(x = "Variables", y = "Valores") +
-  scale_color_brewer(palette = "Set1", name = "Probabilidad de Infarto", labels = c('0 - Menor Probabilidad', '1 - Mayor Probabilidad')) + 
-  ggtitle("Gráfico de Cajas con Puntos - Variables Numéricas y Outliers")
+```{r fig.align='center', fig.width=10, fig.height=8}
+generate_boxplot(heart_clean, "Diagrama de caja y bigotes - Sin Outliers")
 ```
 
 
-
-
-
-
-<h3 style="background-color: #2677AF; color: white;">4.5. Comprobación de la normalidad y homogeneidad de la varianza.</h3>
-
-
-<h4 style="background-color: #2677AF; color: white;">4.5.1 Comprobación de la normalidad</h4>
-
-Para evaluar la normalidad de las variables seleccionadas, empleamos la prueba de Spahiro-Wilk
-```{r}
-# Usamos la prueba de Shapiro-Wilk para verificar la normalidad de cada variable numérica
-variables <- c("age", "trtbps", "chol", "thalachh", "oldpeak")
-resultados_shapiro <- lapply(heart_clean[variables], shapiro.test)
-names(resultados_shapiro) <- variables
-
-# Verificar la estructura de las variables seleccionadas en el conjunto de datos 'heart'
-str(heart_clean[, variables])
-# Mostramos los resultados
-print(resultados_shapiro)
-
-```
-Los resultados de la normalidad muestran que para cada una de las variables numéricas del conjunto de datos, excepto la variable chol, hay evidencia suficiente para rechazar la hipótesis nula y afirmar que los datos no siguen una distribución normal, pero como las observaciones son mayores a 30 se puede asumir.
-
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_4-4-comprobacion-de-la-normalidad-y-homogeneidad-de-la-varianza">4.4 Comprobación de la normalidad y homogeneidad de la varianza</h3>
 
 **Normalizamos los datos**
-A cotninuación normalizamos los datos con valores entre -1 y 1 para poder hacer análisis posteriores
+
+La normalización típica se realiza para que los datos estén en una escala común y no dominada por variables con rangos mucho mayores que otras. Una técnica común es la normalización estándar, que escala los datos para que tengan una media de 0 y una desviación estándar de 1. A continuación normalizamos nuestros datos para poder hacer análisis posteriores.
+
 ```{r}
-heart_clean
-# Normalizamos todas las columnas de heart_clean excepto la columna 'output' (si existe)
-heart_clean_n<-heart_clean
-
-if ("output" %in% colnames(heart_clean_n)) {
-  output_column <- heart_clean_n$output  # Guarda la columna 'output'
-  heart_clean_n <- heart_clean_n[, !names(heart_clean_n) %in% "output"]  # Elimina la columna 'output' para normalizar
-}
-
-# Convertir todas las columnas a tipo numérico
-heart_clean_numeric <- as.data.frame(lapply(heart_clean_n, as.numeric))
+# Seleccionar solo las columnas numéricas para normalizar
+# heart_clean_numeric <- heart_clean[sapply(heart_clean, is.numeric)]
+heart_clean_numeric <- sapply(heart_clean, as.numeric)
 
 
-# Normalizamos los datos
+# Normalizar utilizando la función scale del paquete base
 heart_norm <- as.data.frame(scale(heart_clean_numeric))
 
-# Agregamos la columna 'output'
-if (exists("output_column")) {
-  heart_norm$output <- output_column
-}
+# Agregar la columna 'output' al conjunto de datos normalizado
+heart_norm$output <- heart_clean$output
+head(heart_norm)
 ```
 
+<h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_4-4-1-comprobacion-de-la-normalidad">4.4.1 Comprobación de la normalidad</h4>
 
-<h4 style="background-color: #2677AF; color: white;">4.5.2 Comprobación de la varianza</h4>
+Vamos a comprobar gráficamente la normalidad de mis variables mediante histogramas y gráficos Q-Q.
+Los **histogramas** brindan una visualización de la distribución de tus datos y pueden ayudarte a identificar patrones, simetrías o sesgos en las distribuciones. El **gráfico Q-Q** (quantile-quantile) es una herramienta gráfica que compara la distribución de nuestros datos con la distribución teórica que estamos probando, en este caso, la distribución normal. 
+
+```{r fig.align='center'}
+# Seleccionar las variables de interés
+variables_interes <- c("age", "trtbps", "chol", "thalachh", "oldpeak")
+
+# Crear un nuevo dataframe con las variables seleccionadas
+df_variables <- heart_norm[, variables_interes]
+
+# Convertir el dataframe a formato largo (tidy) para ggplot
+df_long <- tidyr::gather(df_variables, key = "Variable", value = "Valor")
+
+# Crear el histograma combinado
+ggplot(df_long, aes(x = Valor, fill = Variable)) +
+  geom_histogram(binwidth = 0.5, position = "identity", alpha = 0.7) +
+  facet_wrap(~ Variable, scales = "free") +
+  theme_minimal() +
+  labs(title = "Histograma Combinado de Variables", x = "Valor", y = "Frecuencia") +
+  scale_fill_brewer(palette = "Set1")
+```
+
+```{r fig.align='center'}
+# Selecciona solo las variables numéricas
+variables_numericas <- heart_norm[, variables_interes]
+
+# Gráficos Q-Q para cada variable
+par(mfrow = c(2, 3))  # Ajusta el diseño para mostrar varios gráficos
+
+for (variable in colnames(variables_numericas)) {
+  qqnorm(variables_numericas[[variable]], main = paste("Q-Q Plot -", variable))
+  qqline(variables_numericas[[variable]], col = 2)
+}
+
+par(mfrow = c(1, 1))  # Restablece el diseño a uno solo
+```
+
+Una vez realizados ya podemos observar de manera gráfica la normalidad de nuestros datos. Esto no son pruebas formales pero proporcionan una indicación visual. Por ejemplo, en el gráfico Q-Q si todos los puntos están cerca de la línea diagonal, sugiere que tus datos siguen una distribución normal. Y si los puntos se desvían de la línea en los extremos, podría indicar colas pesadas o ligeros sesgos en tus datos.
+
+Para evaluar la normalidad de las variables seleccionadas mediante un prueba estadística formal empleamos la prueba de **Shapiro-Wilk**. 
+
+```{r}
+shapiro_test_results <- sapply(heart_norm[variables_interes], shapiro.test)
+print(shapiro_test_results[c("statistic", "p.value"), ])
+
+```
+Los resultados de la normalidad muestran que para cada una de las variables numéricas del conjunto de datos, **excepto la variable chol**, hay evidencia suficiente para rechazar la hipótesis nula y afirmar que **los datos no siguen una distribución normal**. De todas maneras, con conjuntos de datos grandes, **se puede asumir normalidad** para fines prácticos, incluso si las pruebas de normalidad dan como resultado p-values bajos.
+
+
+
+<h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_4-4-2-comprobacion-de-la-varianza">4.4.2 Comprobación de la varianza</h4>
+
 Calculamos las varianzas de las variables numéricas 'age', 'trtbps', 'chol', 'thalachh', y 'oldpeak', del conjunto, agrupadas según la probabilidad de sufrir o no un infarto. 
+
 ```{r}
 # Calculamos la varianza para cada variable según los niveles de 'output'
-for (variable in variables) {
-  var_por_output <- tapply(heart_norm[[variable]], heart_norm$output, var)
-  mensaje <- paste("Varianza de", variable, "según 'output':")
-  print(mensaje)
-  print(var_por_output)
+resultados_var <- aggregate(. ~ output, data = heart_norm[, c('output', variables_interes)], var)
+print(resultados_var)
+```
+
+Estos resultados muestran la media de cada variable numérica (normalizada) para dos grupos distintos definidos por los niveles '0' y '1' de la variable 'output', los cuales indican menor o mayor probabilidad de ataque cardíaco. Podemos observar que las varianzas son diferentes entre los dos grupos para cada variable. Esto podría indicar falta de homogeneidad de varianzas entre los grupos. Sin embargo, para obtener una conclusión más precisa sobre la homogeneidad de varianzas, sería mejor realizar pruebas específicas, como la prueba de Levene.
+
+Por tanto, para determinar si hay diferencias significativas en las varianzas entre las dos categorías, podrías realizar un test de homogeneidad de varianza, como el **test de Levene** o el **test de Bartlett**. Estos tests evalúan la hipótesis nula de que las varianzas en los diferentes grupos son iguales. En este caso particular vamos a utilizar el test de Bartlett que es menos sensible a la normalidad de los datos.
+
+```{r}
+perform_bartlett_test <- function(data, variables_interes, group_var) {
+  results <- list()
+  
+  for (var in variables_interes) {
+    test_result <- bartlett.test(data[[var]] ~ data[[group_var]])
+    results[[var]] <- test_result
+  }
+  
+  return(results)
 }
 
-# Variables a analizar
-variables <- c('age', 'trtbps', 'chol', 'thalachh', 'oldpeak')
+# Uso de la función
+bartlett_test_results <- perform_bartlett_test(heart_norm, variables_interes, "output")
 
-# Calculamos la varianza para cada variable según los niveles de 'output'
-resultados_var <- aggregate(. ~ output, data = heart_norm[, c('output', variables)], var)
-print(resultados_var)
-
+# Mostrar resultados
+for (var in names(bartlett_test_results)) {
+  cat(paste("Bartlett Test for", var, "\n"))
+  print(bartlett_test_results[[var]])
+  cat("\n")
+}
 ```
-Estos resultado muestran la media de cada variable numérica (normalizada) para dos grupos distintos definidos por los niveles '0' y '1' de la variable 'output', los cuales indican menor o mayor probabilidad de ataque cardíaco.
+
+Si el valor p es menor que el nivel de significancia (0.05 es comúnmente utilizado), podemos rechazar la hipótesis nula de igualdad de varianzas. En nuestros resultados, el grupo **oldpeak** tienen un **valor p significativamente bajo**, lo que sugiere que las **varianzas son diferentes**.
+
+Si el valor p es mayor que el nivel de significancia, no hay suficiente evidencia para rechazar la hipótesis nula. Por tanto podemos asumir homogeneidad de varianzas en nuestras variables **age**, **trtbps**, **chol** y **thalachh**.
+
+**Estadístico**: Indica el tamaño del efecto. Un valor más alto sugiere una mayor diferencia en las varianzas. Por ejemplo, el grupo "oldpeak" tiene un estadístico K-squared significativamente alto.
+
+\newpage
+
+<h2 style="background-color: #0E4D83; color: white; padding: 1px; padding-left: 5px; font-weight: bold;" id="id_5-analisis-de-datos">5 Análisis de Datos</h2>
 
 
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_5-1-analisis-univariante">5.1 Análisis Univariante</h3>
 
+Comprobamos los datos que tenemos para cada uno de los sexos.
 
+```{r fig.align='center'}
+# Creación de la tabla de frecuencias para la variable "sex"
+sex_frequency <- table(heart_clean$sex)
+# Configuración de colores para el piechart
+colors <- c("#FFB6C1", "lightblue")
+# Creación del piechart
+pie(sex_frequency, col = colors, main = "Distribución de Sexo", labels = paste0(c("Mujer ", "Hombre "), "\n ", sex_frequency))
+```
 
+La distribución de género es desigual en tu conjunto de datos, ya que hay más observaciones para "Hombre" (201) que para "Mujer" (86). 
 
+Estudiamos un poco más nuestras variables categóricas. Primero discretizaremos las variables categóricas, asignando a cada valor la correspondiente definición de la variable.
 
-
-<h2 style="background-color: #2677AF; color: white;">5. Análisis de Datos</h2>
-
-
-<h3 style="background-color: #2677AF; color: white;">5.1. Análisis Univariado</h3>
-
-
-<h4 style="background-color: #2677AF; color: white;">5.1.1 Variables Categóricas</h4>
-
-Primero discretizaremos las variables categóricas, asignando a cada valor la correspondiente definición de la variable
 ```{r}
 # Hacemos cópia del conjunto para usarlo solamente en este análisis:
 heart_discr<-heart_clean
@@ -487,16 +622,57 @@ heart_discr$output <- factor(heart_discr$output, levels = c(0, 1), labels = c("M
 ```
 
 
+```{r fig.align='center', fig.width=10, fig.height=10, warning=FALSE}
+categorical_var <- c("sex", "cp", "fbs", "restecg", "exng", "slp", "caa", "thall")
+plots <- list()
 
-A continuación estudiamos la estadística básica de las variables categóricas del conjunto heart
-```{r}
-library(dplyr)
-library(ggplot2)
+for (i in categorical_var) {
+  plot_data <- as.data.frame(table(heart_discr[[i]]))
+  colnames(plot_data) <- c(i, "Freq")
+
+  plot <- ggplot(plot_data, aes_string(x = i, y = "Freq")) +
+    geom_bar(stat = "identity", fill = "#6699CC") +
+    labs(x = i, y = "Nº Observaciones") +
+    theme_minimal() +
+    theme(panel.background = element_rect(fill = "white"),
+          axis.line = element_line(color = "black"),
+          axis.title.y = element_text(size = 10),  # Ajustar tamaño del texto del eje Y
+          axis.text.x = element_text(size = 8, angle = 0, hjust = 0.5))  # Ajustar tamaño del texto del eje X
+
+  plots[[i]] <- plot
+}
+
+grid.arrange(grobs = plots, ncol = 2)
+```
 
 
-par(mfrow = c(2, 2))
+Observamos que el dolor torácico (**cp**) más común en nuestros datos es el de Angina atípica (ATA) seguido de la Angina típica (TA). El valor asintomático (ASY) no tiene observaciones.
 
-categorical_var <- list("sex", "cp", "fbs", "restecg", "exng", "slp", "caa", "thall")
+La mayoría de casos de Glucemia en ayunas (**fbs**)  presentan Glucemia en ayunas <= 120 mg/dl, es decir, tienen el valor Falso.
+
+Los valores predominantes de los resultados del electrocardiograma en reposo (**restecg**) son el valor 0 y 1 que corresponden a "Normal" y "Anomalías de onda ST-T". Casi no hay casos de Hipertrofia ventricular.
+
+Existen el doble de casos aproximadamente donde la Angina no ha sido inducida por esfuerzo (valor 0 de **exng**).
+
+Los datos de la pendiente del segmento ST máximo del ejercicio (**slp**) nos hace ver que son predominantes los caso de Tipo 1 y 2.
+
+EL número de observaciones del número de vasos principales (**caa**) es mucho mayor para el valor 0 y va disminuyendo conforme el número de vasos principales incrementa. Con el valor 4 casi no hay observaciones.
+
+Por último, en la variable que indica la tasa de mortalidad (**thall**) observamos muchas más muestras para los casos 2 y 3.
+
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_5-2analisis-bivariante">5.2 Análisis Bivariante</h3>
+
+Vamos a completar nuestro estudio con un análisis Bivariante de las variables categóricas y numéricas.
+
+<h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_5-2-1-variables-categoricas">5.2.1 Variables Categóricas</h4>
+
+
+A continuación estudiamos la estadística básica de las variables categóricas respecto a output del conjunto heart.
+
+```{r fig.align='center', fig.width=10, fig.height=10, warning=FALSE}
+categorical_var <- c("sex", "cp", "fbs", "restecg", "exng", "slp", "caa", "thall")
+plots <- list()
+
 
 for (i in categorical_var) {
   plot_data <- as.data.frame(table(heart_discr[[i]], heart_discr$output))
@@ -505,42 +681,49 @@ for (i in categorical_var) {
   plot <- ggplot(plot_data, aes_string(x = i, y = "Freq", fill = "output")) +
     geom_bar(stat = "identity", position = position_dodge()) +
     scale_fill_manual(values = c("#BA55D3", "#6699CC"), 
-                      name = "Probabilidad de Infarto", 
+                      name = "Prob. Infarto", 
                       labels = c('0-Menor', '1-Mayor')) +
-    labs(x = i, y = "Número de Observaciones") +
-    theme_minimal() +  # Cambio de tema a minimal
-    theme(panel.background = element_rect(fill = "white"),  # Fondo blanco
-          axis.line = element_line(color = "black"))  # Líneas de ejes negras
-  
-  print(plot)
+    labs(x = i, y = "Nº Observaciones") +
+    theme_minimal() +
+    theme(panel.background = element_rect(fill = "white"),
+          axis.line = element_line(color = "black"),
+          axis.title.y = element_text(size = 10),  # Ajustar tamaño del texto del eje Y
+          axis.text.x = element_text(size = 8, angle=0, hjust=0.5), # Ajustar tamaño del texto del eje X
+          legend.title = element_text(size = 10) +
+          theme(legend.position = c(0.8, 0.8)))   # Ajustar tamaño del texto de la leyenda
+
+  # print(plot)
+  plots[[i]] <- plot
 }
+
+
+grid.arrange(grobs = plots, ncol = 2)
 
 ```
 
 **Observaciones**
 
-Según el thall, el riesgo de infarto se alcanza en las personas con frecuencia cardíaca máxima(clase 2).
-En la característica sexo, la clase 1 tiene más posibilidades de sufrir un infarto que la clase 0.
+Según la variable **thall**, el riesgo de infarto se alcanza en las personas con frecuencia cardíaca máxima(clase 2).
 
-Las probabilidades de sufrir un infarto son mayores en la clase 0 de sexo.
+En la característica **sexo**, la clase 1 (Hombre) tiene más posibilidades de sufrir un infarto que la clase 0 (Mujer). Las probabilidades de sufrir un infarto son mayores en la clase 0 de sexo.
 
-Comparando con el análisis de correlación, la característica fbs muestra la menor correlación con la salida.
+Comparando con el análisis de correlación, la característica **fbs** muestra la menor correlación con la salida.
 
-En caa, las personas con clase, son más propensas a sufrir un ataque al corazón que las personas con clase 4, 3 y 2.
+En **ca**, las personas con clase 0 y 1 son más propensas a sufrir un ataque al corazón que las personas con clase 4, 3 y 2.
 
-Según la característica cp, las personas con dolor no anginoso tienen más probabilidades de sufrir un infarto que las personas con dolor anginoso atípico y típico.
+Según la característica **cp**, las personas con dolor no anginoso tienen más probabilidades de sufrir un infarto que las personas con dolor anginoso atípico y típico.
 
-En exng, las personas con clase 1 tienen altas probabilidades de riesgo de infarto, mientras que las personas con clase 0 son menos propensas al infarto.
+En **exng**, las personas con clase 1 (tienen Angina inducida por el esfuerzo) tienen altas probabilidades de riesgo de infarto, mientras que las personas con clase 0 (no tienen Angina inducida por el esfuerzo) son menos propensas al infarto.
 
-La característica Slp muestra que la clase 0 tiene menos correlación con el resultado que las clases 1 y 2.
-
+La característica **slp** muestra que la clase 0 tiene menos correlación con el resultado que las clases 1 y 2.
 
 
 
+<h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_5-2-2-variables-numericas">5.2.2 Variables Numéricas</h4>
 
-<h4 style="background-color: #2677AF; color: white;">5.1.2 Variables Numéricas</h4>
-A continuación estudiamos la estadística básica de las variables numéricas del conjunto
-```{r}
+A continuación vamos a observar la relación entre las variables y buscar patrones, tendencias o relaciones lineales de las variables numéricas del conjunto de datos. Al utilizar colores diferentes para cada clase de salida, podemos identificar visualmente cómo la distribución de las variables numéricas difiere entre las dos clases. Esto es especialmente útil para comprender si hay diferencias notables en la relación entre las variables y la variable de salida, lo que puede tener implicaciones importantes en el análisis y modelado posterior.
+
+```{r fig.align='center',fig.width=8, fig.height=8, warning=FALSE}
 # Creamos un gráfico de pares con las variables numéricas del conjunto de datos "heart"
 # Establecer opciones para el tamaño del gráfico
 options(repr.plot.width = 20, repr.plot.height = 20)  
@@ -564,18 +747,21 @@ interactive_plot <- ggplotly(pair_plot)
 
 # Mostramos el gráfico interactivo
 interactive_plot
-
 ```
 
 
+Por un lado, el gráfico anterior viene a corroborar lo visto en el gráfico de correlaciones en apartados anteriores observándose la correlación negativa moderada entre la edad (**age**) y la variable **thalachh**. Podemos observar como esta correlación es algo más grande en los casos que existen mayor probabilidad de infarto. 
 
-<h3 style="background-color: #0E4D83; color: white;">5.2. Modelo No Supervisado: Clustering</h3>
+<h3 style="background-color: #2677AF; color: white; padding-left: 5px;" id="id_5-3-analisis-multivariado">5.3 Análisis Multivariado
+
+<h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_5-3-1-modelo-no-supervisado-clustering">5.3.1 Modelo No Supervisado: Clustering</h4>
 
 Un modelo no supervisado de clustering busca agrupar datos similares en conjuntos o clústeres. En este caso, la distancia Manhattan es una medida de distancia utilizada en clustering para calcular la diferencia entre dos puntos en un espacio multidimensional.
 
 En este caso, puede ser útil para la identificación de subgrupos de pacientes con perfiles de riesgo similares de enfermedad cardíaca, lo que podría ser útil para personalizar tratamientos, identificar factores de riesgo comunes o incluso guiar futuras investigaciones médicas.
 
 Para poder aplicar el logaritmo, escalamos los datos y mostramos el dendograma para saber donde determinar el corte y escoger el número de clústers.
+
 ```{r}
 heart_norm <- as.data.frame(sapply(heart_norm, as.numeric))
 
@@ -588,39 +774,67 @@ dist_manh<-dist(heart_scale, method = 'manhattan')
 #A continuación usamos la variable creada para minimizar las diferencias dentro de los conglomerados mediante el método Ward
 hcluster<-hclust(dist_manh, method = "ward.D")
 hcluster
-
 ```
 
-```{r}
-library(dendextend)
+```{r fig.align='center'}
 dendo<-as.dendrogram(hcluster)
 dendo_k<-find_k(dendo)
 plot(dendo_k)
-
-# Observamos como el número de clusters obtenido es 2
-plot(color_branches(dendo,k=dendo_k$nc)) #Hemos obtenido que el nombre de clusters será 2
-
-
-# Creamos la matriz de confusión
-grupos<-cutree(hcluster,k=2)
-table(grupos,heart_clean$output)
 ```
+
+Observamos que el número de clusters óptimo es de `r dendo_k$nc`. Vamos a dibujar nuestro dendograma.
+
+```{r fig.align='center'}
+plot(color_branches(dendo,k=dendo_k$nc)) 
+```
+
+
+Creamos la matriz de confusión.
+
+```{r fig.align='center'}
+grupos<-cutree(hcluster,k=dendo_k$nc)
+# table(grupos,heart_clean$output)
+conf_matrix <- table(grupos, heart_clean$output)
+# Calcula la precisión global
+precision_knn <- sum(diag(conf_matrix)) / sum(conf_matrix)
+
+# Crea un data frame 
+conf_matrix_df <- as.data.frame(as.table(conf_matrix))
+colnames(conf_matrix_df) <- c("Predicted", "Actual", "Count")
+
+# Ajusta las etiquetas si es necesario
+conf_matrix_df$Actual <- factor(conf_matrix_df$Actual, levels = c("0", "1"))
+conf_matrix_df$Predicted <- factor(conf_matrix_df$Predicted, levels = c("2", "1"))
+
+
+# Crea el gráfico de dispersión con ggplot2
+ggplot(conf_matrix_df, aes(x = Actual, y = Predicted, size = Count, color = as.factor(Count))) +
+  geom_point(alpha = 0.7) +
+  geom_text(aes(label = Count), vjust = 1.5, color = "black", size = 3) +
+  scale_size_continuous(range = c(5, 15)) +
+  labs(title = "Matriz de confusión",
+       x = "Valor Actual",
+       y = "Valor Predicho") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  annotate("text", x = 1.5, y = 2.4, label = paste("Accuracy:", round(precision_knn, 2)))
+```
+
 Mediante la matriz de confusión creada, extraeremos el número de casos que se han clasificado correctamente y el porcentaje de precisión del modelo
 
 ```{r}
-cat("Número de observaciones clasificadas correctamente =",121+121, "\n")
-cat("Número de observaciones clasificadas incorrectamente =", 8+37, "\n")
-cat("Precisión del modelo:",(242/(242+45))*100, "%\n")
+cat("Número de observaciones clasificadas correctamente =", sum(diag(conf_matrix)), "\n")
+cat("Número de observaciones clasificadas incorrectamente =", sum(conf_matrix) - sum(diag(conf_matrix)), "\n")
+cat("Precisión del modelo:", sprintf("%.2f%%", precision_knn * 100), "\n")
 ```
-La precisión del modelo es de un 84.32%.
+Con una **precisión del modelo del `r sprintf("%.2f%%", precision_knn * 100)`**, se puede decir que este modelo de clasificación logra predecir correctamente un elevado número de los casos en el conjunto de datos evaluado. Esto indica una capacidad razonablemente buena para predecir la enfermedad cardíaca en función de las características utilizadas en el modelo. Sin embargo, en un futuro también sería valioso evaluar otras métricas de rendimiento para obtener una comprensión más completa de su eficacia, como la sensibilidad, la especificidad u otras métricas según el contexto médico específico.
 
 
+A continuación, visualizamos el cluster con la función fviz_cluster.
 
-A continuación, visualizamos el cluster con la función fviz_cluster:
 ```{r}
-library(cluster)
-library(factoextra)
-pam.res <- pam(heart_scale, 2)
+pam.res <- pam(heart_scale, dendo_k$nc)
+#pam.res <- pam(heart_norm, 2)
 
 fviz_cluster(pam.res, geom = "point", ellipse.type = "norm",
              show.clust.cent = TRUE,star.plot = TRUE)+
@@ -628,39 +842,71 @@ fviz_cluster(pam.res, geom = "point", ellipse.type = "norm",
 
 ```
 
-Con una precisión del modelo del 84.33%, se puede decir que este modelo de clasificación logra predecir correctamente alrededor del 84% de los casos en el conjunto de datos evaluado. Esto indica una capacidad razonablemente buena para predecir la enfermedad cardíaca en función de las características utilizadas en el modelo. Sin embargo, en un futuro también sería valioso evaluar otras métricas de rendimiento para obtener una comprensión más completa de su eficacia, como la sensibilidad, la especificidad u otras métricas según el contexto médico específico.
+En este gráfico observamos que cada grupo obtenido del algoritmo K-means se representa de un color diferente. Podemos ver líneas que conectan los puntos con sus respectivos centroides. Estas líneas nos dan una idea de la distancia entre los puntos y los centroides, lo que refleja cómo se han agrupado los datos.
 
 
-
-
-
-<h3 style="background-color: #0E4D83; color: white;">5.3. Modelo Supervisado: Regressión Logística</h3>
+<h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_5-3-2-modelo-supervisado-regresion-logistica">5.3.2 Modelo Supervisado: Regresión Logística</h4>
 Este análisis busca entender cómo diferentes variables pueden influir en una variable de salida específica. En este caso, se trata de predecir un cierto resultado,es decir, si alguien tiene cierta enfermedad cardíaca o no (ouput).
 ```{r}
+
 # Codificamos la variable objetivo como factor
 heart_clean$output <- factor(heart_clean$output)
 
 heart_clean <- as.data.frame(sapply(heart_clean, as.numeric))
 
-# Reemplazamos los valores 2 por 0 en la columna "output"
+# Reemplazamos los valores en la columna "output"
 heart_clean$output[heart_clean$output == 1] <- 0
 heart_clean$output[heart_clean$output == 2] <- 1
 
 # Dividimos el conjunto de datos en conjunto de entrenamiento y conjunto de prueba
-library(caTools)
 set.seed(123)
 split = sample.split(heart_clean$output, SplitRatio = 0.75)
 training_set = subset(heart_clean, split == TRUE)
 test_set = subset(heart_clean, split == FALSE)
 
 # Escalamos de características
-training_set[-14] = scale(training_set[-14])
-test_set[-14] = scale(test_set[-14])
+# training_set[-14] = scale(training_set[-14])
+training_set[, -which(names(training_set) == 'output')] <- scale(training_set[, -which(names(training_set) == 'output')])
+
+#test_set[-14] = scale(test_set[-14])
+test_set[, -which(names(test_set) == 'output')] <- scale(test_set[, -which(names(test_set) == 'output')])
+
 
 # Ajustamos la regresión logística al conjunto de entrenamiento
-classifier = glm(formula = output ~ age+ sex + cp + trtbps+chol+fbs+restecg+thalachh+exng+oldpeak+slp+caa+thall,
+classifier = glm(formula = output ~ .,
                  family = binomial,
                  data = training_set)
+# Mostrarnos resultados
+summary(classifier)
+```
+
+Una vez generado el modelo de regresión logística vamos a predicir los resultados y a calcular la matriz de confusión.
+
+```{r}
+# Predecimos los resultados del conjunto de prueba
+prob_pred = predict(classifier, type = 'response', newdata = test_set[-14])
+y_pred = ifelse(prob_pred > 0.5, 1, 0)
+
+# Creamos la Matriz de Confusión
+cm = table(test_set[, 14], y_pred > 0.5)
+cm
+```
+
+
+```{r}
+# calculamos la precisión
+precision_glm <- sum(diag(cm)) / sum(cm)
+```
+
+Con todas las variables vemos que conseguimos una precisión del modelo del `r sprintf("%.2f%%", precision_glm * 100)`. Vamos a probar una segunda aproximación con las variables más significativas.
+
+```{r}
+
+# Ajustamos la regresión logística al conjunto de entrenamiento
+classifier = glm(formula = output ~ sex + cp + chol + restecg + thalachh + oldpeak + slp + caa + thall,
+                 family = binomial,
+                 data = training_set)
+# Mostramos resultados
 summary(classifier)
 
 # Predecimos los resultados del conjunto de prueba
@@ -669,10 +915,14 @@ y_pred = ifelse(prob_pred > 0.5, 1, 0)
 
 # Creamos la Matriz de Confusión
 cm = table(test_set[, 14], y_pred > 0.5)
+
+# calculamos la precisión
+precision <- sum(diag(cm)) / sum(cm)
 ```
 
+En este caso hemos conseguido un modelo con una precisión del `r sprintf("%.2f%%", precision * 100)` pero el valor de AIC (Criterio de Información de Akaike) es menor que en el anterior modelo. AIC es un indicador que busca encontrar un equilibrio entre la bondad del ajuste del modelo y la simplicidad del modelo. En general, un modelo con un AIC más bajo se considera mejor, ya que indica que está proporcionando un buen ajuste con un número menor de parámetros.
 
-El modelo de regresión logística fue construido para predecir la probabilidad de ocurrencia de enfermedades cardíacas (output) en función de varias variables predictoras (age, sex, cp, trtbps, chol, fbs, restecg, thalachh, exng, oldpeak, slp, caa, thall).
+Si nos fijamos en el primer modelo de regresión logística podemos decir que fue construido para predecir la probabilidad de ocurrencia de enfermedades cardíacas (output) en función de varias variables predictoras (age, sex, cp, trtbps, chol, fbs, restecg, thalachh, exng, oldpeak, slp, caa, thall).
 
 + **age (Edad)**: No se encuentra una relación significativa (coeficiente 0.028971, p-valor 0.913314) entre la edad y la probabilidad de enfermedades cardíacas en este modelo.
 + **sex (Género)**: Existe una relación significativa y negativa (coeficiente -0.844252, p-valor 0.001316) entre el género y la probabilidad de enfermedades cardíacas. Las mujeres tienden a tener una menor probabilidad de padecer enfermedades cardíacas en comparación con los hombres.
@@ -686,15 +936,55 @@ En resumen, las variables más influyentes para predecir la ocurrencia de enferm
 
 El AIC del modelo es 176.91, lo que sugiere que este modelo podría mejorar con ajustes adicionales o la inclusión de más variables predictoras. Además, la deviance residual es significativamente menor que la deviance nula, indicando que el modelo con las variables predictoras explica parte de la variabilidad en la variable de salida (enfermedades cardíacas).
 
+<h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_5-3-3-random-forest">5.3.3 Random forest</h4>
 
+Random Forest, un algoritmo de aprendizaje automático que es efectivo para la clasificación.
 
+```{r warning=FALSE}
+set.seed(123)  # Para reproducibilidad
+random_frst <- randomForest( output ~ .,
+                             data=training_set)
 
-<h2 style="background-color: #0E4D83; color: white;">Resolución del problema</h2>
+y_pred <- predict(random_frst, test_set)
 
-La creación y evaluación del modelo de clasificación muestran una precisión del 84.33%, lo que indica una capacidad razonablemente buena para predecir la ocurrencia de enfermedades cardíacas en función de las variables utilizadas. Este nivel de precisión es prometedor y señala la relevancia de las características como predictores de la enfermedad.
+# Matriz de confusión
+cm = table(test_set[, 14], y_pred > 0.5)
+cm
+precision_rf <- sum(diag(cm)) / sum(cm)
+```
 
-Entre estas variables, "cp" (Tipo de dolor torácico), "sex" (Género), "caa" (Número de vasos sanguíneos principales) y "thall" (Resultado de prueba de esfuerzo cardíaco) destacan como las más influyentes para identificar la presencia de enfermedades cardíacas en este contexto.
+Para el modelo de RandomForest hemos obtenido una precisión del `r sprintf("%.2f%%", precision_rf * 100)`.
 
-No obstante, es vital destacar que la evaluación de más métricas de rendimiento, como la sensibilidad y la especificidad, podría proporcionar una imagen más completa de la eficacia del modelo, especialmente en un contexto médico específico. Además, considerar la inclusión de más variables o refinamientos para mejorar el modelo es clave, ya que el AIC sugiere que aún hay espacio para ajustes adicionales.
+\newpage
 
-En cuanto a responder al problema, estos resultados proporcionan una comprensión inicial de qué variables pueden estar relacionadas con las enfermedades cardíacas, pero hay áreas que podrían necesitar más investigación o ajustes adicionales en el modelo. Se pueden formular hipótesis preliminares sobre las variables más influyentes, pero para una respuesta más completa al problema, se requeriría un análisis más detallado y quizás la inclusión de más variables predictoras o datos adicionales.
+<h2 style="background-color: #0E4D83; color: white; padding: 1px; padding-left: 5px; font-weight: bold;" id="id_6-resolucion-del-problema">6 Resolución del problema</h2>
+
+Como conclusión final podemos comentar que se realizaron análisis descriptivos detallados para comprender la distribución y características de las variables en tu conjunto de datos. Asimismo se exploraron visualmente las relaciones entre las variables, identificando posibles patrones o tendencias.
+
+Se realizaron pruebas estadísticas y gráficos para explorar las relaciones entre pares de variables y se evaluó la homogeneidad de varianzas y se tomaron decisiones sobre la aplicabilidad de ciertos análisis.
+
+Se aplicaron técnicas avanzadas, como el **Clustering (k-means)**, para identificar patrones y grupos en los datos.
+
+Se utilizaron modelos predictivos, como **Random Forest** y **Regresión Logística**, para predecir la variable de salida (output).
+
+Se han construido unos modelos con una precisión superior al 80% siendo el mejor KNN con una precision superior al 84%.
+
+```{r fig.align='center'}
+# Crear un data frame con los valores
+df <- data.frame(Modelo = c("KNN", "Regresión Logística", "Random Forest"),
+                 Precision = c(precision_knn, precision_glm, precision_rf))
+
+# Crear el gráfico de barras
+library(ggplot2)
+
+ggplot(df, aes(x = Modelo, y = Precision, fill = Modelo)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = paste0(round(Precision * 100), "%")),
+            position = position_dodge(width = 0.9),
+            vjust = -0.5) +
+  labs(title = "Comparación de Precisiones de Modelos",
+       x = "Modelo",
+       y = "Precision") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
