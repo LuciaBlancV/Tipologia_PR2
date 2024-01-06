@@ -1,12 +1,12 @@
 ---
 title: "Sergi Sánchez Romero y Lucia Blanc Velázquez"
-author: "Diciembre 2023"
-date: ""
+author: ""
+date: "Diciembre 2023"
 output:
   html_document: 
     highlight: default
     number_sections: yes
-    theme: cosmo
+    theme: simplex
     toc: yes
     toc_depth: 3
     includes:
@@ -47,7 +47,7 @@ output:
    4.3 [Valores Extremos](#4-3-valores-extremos)
    
    4.4 [Comprobación de la normalidad y homogeneidad de la varianza](#4-4-comprobacion-de-la-normalidad-y-homogeneidad-de-la-varianza)
-   
+  
       4.4.1 [Comprobación de la normalidad](#4-4-1-comprobacion-de-la-normalidad)
       
       4.4.2 [Comprobación de la varianza](#4-4-2-comprobacion-de-la-varianza)
@@ -69,6 +69,8 @@ output:
       5.3.2 [Modelo Supervisado: Regresión Logística](#5-3-2-modelo-supervisado-regresion-logistica)
       
       5.3.3 [Random Forest](#5-3-3-random-forest)
+      
+      5.3.4 [k-Nearest Neighbors](#5-3-4-knn)
       
 6. [Resolución del problema](#6-resolucion-del-problema)
 
@@ -179,7 +181,7 @@ packages <- c('csv', 'dplyr', 'ggplot2', 'reshape', 'plotly', 'plyr', 'Stat2Data
               'Matrix', 'patchwork', 'ggcorrplot', 'corrplot', 'DataExplorer', 'psych',
               'highcharter', 'tidyverse', 'GGally', 'htmltools', 'RColorBrewer',
               'dendextend', 'cluster', 'factoextra', 'caTools', 'gridExtra', 'car', 
-              'randomForest')
+              'randomForest', 'class')
 
 # Instalar y cargar paquetes
 for (package in packages) {
@@ -528,8 +530,28 @@ Calculamos las varianzas de las variables numéricas 'age', 'trtbps', 'chol', 't
 
 ```{r}
 # Calculamos la varianza para cada variable según los niveles de 'output'
-resultados_var <- aggregate(. ~ output, data = heart_norm[, c('output', variables_interes)], var)
-print(resultados_var)
+heart_var <- heart_norm
+
+calcular_varianza <- function(data, output_category) {
+  subset_data <- subset(data, output == output_category)
+  subset_data <- subset_data[, c("age", "trtbps", "chol", "thalachh", "oldpeak")]
+  return(diag(var(subset_data)))
+}
+
+# Calcular varianzas para output = 0
+varianzas_output_0 <- calcular_varianza(heart_var, output_category = 0)
+
+# Calcular varianzas para output = 1
+varianzas_output_1 <- calcular_varianza(heart_var, output_category = 1)
+
+# Combina los resultados en un dataframe
+resultados_varianzas <- data.frame(
+  Varianza_Output_0 = varianzas_output_0,
+  Varianza_Output_1 = varianzas_output_1
+)
+
+# Visualizar los resultados
+resultados_varianzas
 ```
 
 Estos resultados muestran la media de cada variable numérica (normalizada) para dos grupos distintos definidos por los niveles '0' y '1' de la variable 'output', los cuales indican menor o mayor probabilidad de ataque cardíaco. Podemos observar que las varianzas son diferentes entre los dos grupos para cada variable. Esto podría indicar falta de homogeneidad de varianzas entre los grupos. Sin embargo, para obtener una conclusión más precisa sobre la homogeneidad de varianzas, sería mejor realizar pruebas específicas, como la prueba de Levene.
@@ -796,7 +818,7 @@ grupos<-cutree(hcluster,k=dendo_k$nc)
 # table(grupos,heart_clean$output)
 conf_matrix <- table(grupos, heart_clean$output)
 # Calcula la precisión global
-precision_knn <- sum(diag(conf_matrix)) / sum(conf_matrix)
+precision_kmeans <- sum(diag(conf_matrix)) / sum(conf_matrix)
 
 # Crea un data frame 
 conf_matrix_df <- as.data.frame(as.table(conf_matrix))
@@ -817,7 +839,7 @@ ggplot(conf_matrix_df, aes(x = Actual, y = Predicted, size = Count, color = as.f
        y = "Valor Predicho") +
   theme_minimal() +
   theme(legend.position = "none") +
-  annotate("text", x = 1.5, y = 2.4, label = paste("Accuracy:", round(precision_knn, 2)))
+  annotate("text", x = 1.5, y = 2.4, label = paste("Accuracy:", round(precision_kmeans, 2)))
 ```
 
 Mediante la matriz de confusión creada, extraeremos el número de casos que se han clasificado correctamente y el porcentaje de precisión del modelo
@@ -825,9 +847,9 @@ Mediante la matriz de confusión creada, extraeremos el número de casos que se 
 ```{r}
 cat("Número de observaciones clasificadas correctamente =", sum(diag(conf_matrix)), "\n")
 cat("Número de observaciones clasificadas incorrectamente =", sum(conf_matrix) - sum(diag(conf_matrix)), "\n")
-cat("Precisión del modelo:", sprintf("%.2f%%", precision_knn * 100), "\n")
+cat("Precisión del modelo:", sprintf("%.2f%%", precision_kmeans * 100), "\n")
 ```
-Con una **precisión del modelo del `r sprintf("%.2f%%", precision_knn * 100)`**, se puede decir que este modelo de clasificación logra predecir correctamente un elevado número de los casos en el conjunto de datos evaluado. Esto indica una capacidad razonablemente buena para predecir la enfermedad cardíaca en función de las características utilizadas en el modelo. Sin embargo, en un futuro también sería valioso evaluar otras métricas de rendimiento para obtener una comprensión más completa de su eficacia, como la sensibilidad, la especificidad u otras métricas según el contexto médico específico.
+Con una **precisión del modelo del `r sprintf("%.2f%%", precision_kmeans * 100)`**, se puede decir que este modelo de clasificación logra predecir correctamente un elevado número de los casos en el conjunto de datos evaluado. Esto indica una capacidad razonablemente buena para predecir la enfermedad cardíaca en función de las características utilizadas en el modelo. Sin embargo, en un futuro también sería valioso evaluar otras métricas de rendimiento para obtener una comprensión más completa de su eficacia, como la sensibilidad, la especificidad u otras métricas según el contexto médico específico.
 
 
 A continuación, visualizamos el cluster con la función fviz_cluster.
@@ -955,6 +977,29 @@ precision_rf <- sum(diag(cm)) / sum(cm)
 
 Para el modelo de RandomForest hemos obtenido una precisión del `r sprintf("%.2f%%", precision_rf * 100)`.
 
+<h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_5-3-4-knn">5.3.4 k-Nearest Neighbors</h4>
+
+k-NN (k-Nearest Neighbors) es un algoritmo de aprendizaje automático supervisado utilizado tanto para clasificación como para regresión. En el contexto de clasificación, k-NN asigna una etiqueta a un nuevo punto de datos basándose en la mayoría de las etiquetas de sus k vecinos más cercanos en el espacio de características. En regresión, k-NN predice el valor de un nuevo punto de datos tomando el promedio de los valores de sus k vecinos más cercanos.
+
+```{r warning=FALSE}
+set.seed(123)  # Para reproducibilidad
+# Aplicar el algoritmo KNN
+k_value <- 5  # Ajustar el valor
+knn_model <- knn(train = training_set[0:14], test = test_set[0:14], cl = training_set[[14]], k = k_value)
+
+# Crear la matriz de confusión
+conf_matrix_knn <- table(Actual = test_set[[14]], Predicted = knn_model)
+
+# Calcular la precisión del modelo
+precision_knn <- sum(diag(conf_matrix_knn)) / sum(conf_matrix_knn)
+
+# Imprimir la matriz de confusión y la precisión
+print(conf_matrix_knn)
+print(paste("Precisión del modelo k-NN:", round(precision_knn * 100, 2), "%"))
+```
+
+Para el modelo de k-Nearest Neighbors hemos obtenido una precisión del `r sprintf("%.2f%%", precision_knn * 100)`.
+
 \newpage
 
 <h2 style="background-color: #0E4D83; color: white; padding: 1px; padding-left: 5px; font-weight: bold;" id="id_6-resolucion-del-problema">6 Resolución del problema</h2>
@@ -965,14 +1010,14 @@ Se realizaron pruebas estadísticas y gráficos para explorar las relaciones ent
 
 Se aplicaron técnicas avanzadas, como el **Clustering (k-means)**, para identificar patrones y grupos en los datos.
 
-Se utilizaron modelos predictivos, como **Random Forest** y **Regresión Logística**, para predecir la variable de salida (output).
+Se utilizaron modelos predictivos, como **Random Forest**, **Regresión Logística** y **k-Nearest Neighbors**, para predecir la variable de salida (output).
 
-Se han construido unos modelos con una precisión superior al 80% siendo el mejor KNN con una precision superior al 84%.
+Se han construido unos modelos con una precisión superior al 80% siendo el mejor k-NN con una precisión del `r sprintf("%.2f%%", precision_knn * 100)`.
 
 ```{r fig.align='center'}
 # Crear un data frame con los valores
-df <- data.frame(Modelo = c("KNN", "Regresión Logística", "Random Forest"),
-                 Precision = c(precision_knn, precision_glm, precision_rf))
+df <- data.frame(Modelo = c("K-means", "Regresión Logística", "Random Forest", "KNN"),
+                 Precision = c(precision_kmeans, precision_glm, precision_rf, precision_knn))
 
 # Crear el gráfico de barras
 library(ggplot2)
