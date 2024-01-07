@@ -1,5 +1,5 @@
 ---
-title: "Sergi Sánchez Romero y Lucia Blanc Velázquez"
+title: "Sergio Sánchez Romero y Lucia Blanc Velázquez"
 author: ""
 date: "Diciembre 2023"
 output:
@@ -1040,7 +1040,7 @@ Para el modelo de k-Nearest Neighbors hemos obtenido una precisión del `r sprin
 
 <h2 style="background-color: #0E4D83; color: white; padding: 1px; padding-left: 5px; font-weight: bold;" id="id_6-resolucion-del-problema">6 Resolución del problema</h2>
 
-Como conclusión final podemos comentar que se realizaron análisis descriptivos detallados para comprender la distribución y características de las variables en tu conjunto de datos. Asimismo se exploraron visualmente las relaciones entre las variables, identificando posibles patrones o tendencias.
+Como conclusión final podemos comentar que se realizaron análisis descriptivos detallados para comprender la distribución y características de las variables en nuestro conjunto de datos realizando tareas de limpieza. Asimismo se exploraron visualmente las relaciones entre las variables, identificando posibles patrones o tendencias.
 
 Se realizaron pruebas estadísticas y gráficos para explorar las relaciones entre pares de variables y se evaluó la homogeneidad de varianzas y se tomaron decisiones sobre la aplicabilidad de ciertos análisis.
 
