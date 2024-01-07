@@ -28,10 +28,10 @@ A continuación se describe brevemente cada una de las columnas del dataset:
 + **age**: Edad del paciente
 + **sex**: Sexo del paciente (F=0; M=1)
 + **cp**: Tipo dolor torácico
-  - **Value 1**: Angina típica (TA)
-  - **Value 2**: Angina atípica (ATA)
-  - **Value 3**: Dolor no-anginal (NAP)
-  - **Value 4**: Asintomático (ASY)
+  - **Value 0**: Angina típica (TA)
+  - **Value 1**: Angina atípica (ATA)
+  - **Value 2**: Dolor no-anginal (NAP)
+  - **Value 3**: Asintomático (ASY)
    
 + **trtbps**: Presión arterial en reposo (in mm Hg)
 + **chol**: Colesterol en mg/dl obtenido a través del sensor de IMC
