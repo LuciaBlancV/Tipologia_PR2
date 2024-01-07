@@ -181,7 +181,7 @@ packages <- c('csv', 'dplyr', 'ggplot2', 'reshape', 'plotly', 'plyr', 'Stat2Data
               'Matrix', 'patchwork', 'ggcorrplot', 'corrplot', 'DataExplorer', 'psych',
               'highcharter', 'tidyverse', 'GGally', 'htmltools', 'RColorBrewer',
               'dendextend', 'cluster', 'factoextra', 'caTools', 'gridExtra', 'car', 
-              'randomForest', 'class')
+              'randomForest', 'class', 'pROC')
 
 # Instalar y cargar paquetes
 for (package in packages) {
@@ -617,7 +617,7 @@ heart_discr<-heart_clean
 heart_discr$sex <- ifelse(heart_discr$sex == 0, "Mujer", "Hombre")
 
 # Dolor Torácico (cp)
-heart_discr$cp <- factor(heart_discr$cp, levels = c(1, 2, 3, 4), labels = c("Angina Típica", "Angina Atípica", "No Anginal", "Asintomático"))
+heart_discr$cp <- factor(heart_discr$cp, levels = c(0, 1, 2, 3), labels = c("Angina Típica", "Angina Atípica", "No Anginal", "Asintomático"))
 
 # Resultados del Electrocardiograma en Reposo (restecg)
 heart_discr$restecg <- factor(heart_discr$restecg, levels = c(0, 1, 2), labels = c("Normal", "Anomalías ST-T", "Hipertrofia ventricular"))
@@ -668,7 +668,7 @@ grid.arrange(grobs = plots, ncol = 2)
 ```
 
 
-Observamos que el dolor torácico (**cp**) más común en nuestros datos es el de Angina atípica (ATA) seguido de la Angina típica (TA). El valor asintomático (ASY) no tiene observaciones.
+Observamos que el dolor torácico (**cp**) más común en nuestros datos es el de Angina típica (TA) seguido del caso No Anginal.
 
 La mayoría de casos de Glucemia en ayunas (**fbs**)  presentan Glucemia en ayunas <= 120 mg/dl, es decir, tienen el valor Falso.
 
@@ -854,7 +854,7 @@ Con una **precisión del modelo del `r sprintf("%.2f%%", precision_kmeans * 100)
 
 A continuación, visualizamos el cluster con la función fviz_cluster.
 
-```{r}
+```{r fig.align='center'}
 pam.res <- pam(heart_scale, dendo_k$nc)
 #pam.res <- pam(heart_norm, 2)
 
@@ -906,8 +906,8 @@ Una vez generado el modelo de regresión logística vamos a predicir los resulta
 
 ```{r}
 # Predecimos los resultados del conjunto de prueba
-prob_pred = predict(classifier, type = 'response', newdata = test_set[-14])
-y_pred = ifelse(prob_pred > 0.5, 1, 0)
+prob_pred_glm = predict(classifier, type = 'response', newdata = test_set[-14])
+y_pred = ifelse(prob_pred_glm > 0.5, 1, 0)
 
 # Creamos la Matriz de Confusión
 cm = table(test_set[, 14], y_pred > 0.5)
@@ -958,6 +958,35 @@ En resumen, las variables más influyentes para predecir la ocurrencia de enferm
 
 El AIC del modelo es 176.91, lo que sugiere que este modelo podría mejorar con ajustes adicionales o la inclusión de más variables predictoras. Además, la deviance residual es significativamente menor que la deviance nula, indicando que el modelo con las variables predictoras explica parte de la variabilidad en la variable de salida (enfermedades cardíacas).
 
+Vamos a obtener otra métrica de nuestro modelo como podría ser el valor de AUC a través de la curva ROC. Creamos una función que podrá ser utilizada en otro métodos.
+
+```{r fig.align='center', warning=FALSE, message=FALSE}
+plot_roc_curve <- function(test_set, prob_pred, title) {
+  # Crear el objeto roc
+  roc_curve <- roc(test_set$output, prob_pred)
+
+  title_graph = paste0("Curva ROC para ", title)
+  # Crear la curva ROC con ggplot2
+  roc_plot <- ggroc(roc_curve) +
+    ggtitle(title_graph) +
+    labs(x = "Tasa de Falsos Positivos", y = "Tasa de Verdaderos Positivos") +
+    theme_minimal()
+
+  # Mostrar el gráfico
+  print(roc_plot)
+
+  # Obtener el área bajo la curva (AUC)
+  auc_value <- auc(roc_curve)
+  title_auc = paste0("Área bajo la curva (AUC) en ", title, ": ")
+  cat(title_auc, round(auc_value, 2), "\n")
+
+  # Devolver el valor de AUC
+  return(auc_value)
+}
+
+auc_glm<- plot_roc_curve(test_set = test_set, prob_pred = prob_pred_glm, title="Regresión Logística")
+```
+
 <h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_5-3-3-random-forest">5.3.3 Random forest</h4>
 
 Random Forest, un algoritmo de aprendizaje automático que es efectivo para la clasificación.
@@ -967,15 +996,21 @@ set.seed(123)  # Para reproducibilidad
 random_frst <- randomForest( output ~ .,
                              data=training_set)
 
-y_pred <- predict(random_frst, test_set)
+y_pred_rf <- predict(random_frst, test_set)
 
 # Matriz de confusión
-cm = table(test_set[, 14], y_pred > 0.5)
+cm = table(test_set[, 14], y_pred_rf > 0.5)
 cm
 precision_rf <- sum(diag(cm)) / sum(cm)
 ```
 
 Para el modelo de RandomForest hemos obtenido una precisión del `r sprintf("%.2f%%", precision_rf * 100)`.
+
+Calculamos el valor de AUC.
+
+```{r fig.align='center', warning=FALSE, message=FALSE}
+auc_rf<- plot_roc_curve(test_set = test_set, prob_pred = y_pred_rf, title="Random Forest")
+```
 
 <h4 style="background-color: #6094C8; color: white; padding-left: 5px;" id="id_5-3-4-knn">5.3.4 k-Nearest Neighbors</h4>
 
@@ -985,7 +1020,7 @@ k-NN (k-Nearest Neighbors) es un algoritmo de aprendizaje automático supervisad
 set.seed(123)  # Para reproducibilidad
 # Aplicar el algoritmo KNN
 k_value <- 5  # Ajustar el valor
-knn_model <- knn(train = training_set[0:14], test = test_set[0:14], cl = training_set[[14]], k = k_value)
+knn_model <- knn(train = training_set[0:14], test = test_set[0:14], cl = training_set[[14]], k = k_value,  prob = TRUE)
 
 # Crear la matriz de confusión
 conf_matrix_knn <- table(Actual = test_set[[14]], Predicted = knn_model)
@@ -999,6 +1034,7 @@ print(paste("Precisión del modelo k-NN:", round(precision_knn * 100, 2), "%"))
 ```
 
 Para el modelo de k-Nearest Neighbors hemos obtenido una precisión del `r sprintf("%.2f%%", precision_knn * 100)`.
+
 
 \newpage
 
@@ -1018,9 +1054,6 @@ Se han construido unos modelos con una precisión superior al 80% siendo el mejo
 # Crear un data frame con los valores
 df <- data.frame(Modelo = c("K-means", "Regresión Logística", "Random Forest", "KNN"),
                  Precision = c(precision_kmeans, precision_glm, precision_rf, precision_knn))
-
-# Crear el gráfico de barras
-library(ggplot2)
 
 ggplot(df, aes(x = Modelo, y = Precision, fill = Modelo)) +
   geom_bar(stat = "identity", color = "black") +
