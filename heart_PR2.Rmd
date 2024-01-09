@@ -177,6 +177,8 @@ Primero de todo, cargamos las librerías que vamos a usar durante la práctica.
 
 ```{r message= FALSE, warning=FALSE}
 # Lista de paquetes
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+
 packages <- c('csv', 'dplyr', 'ggplot2', 'reshape', 'plotly', 'plyr', 'Stat2Data',
               'Matrix', 'patchwork', 'ggcorrplot', 'corrplot', 'DataExplorer', 'psych',
               'highcharter', 'tidyverse', 'GGally', 'htmltools', 'RColorBrewer',
